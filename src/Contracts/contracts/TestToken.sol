@@ -2,8 +2,9 @@ pragma solidity ^0.4.18;
 
 import './PromoCodeToken.sol';
 import './PausableToken.sol';
+import './MintableToken.sol';
 
-contract TestToken is PromoCodeToken, PausableToken {
+contract TestToken is PromoCodeToken, PausableToken, MintableToken {
     
     string public constant name = "Test Token";
     string public constant symbol = "TTT";
@@ -12,11 +13,12 @@ contract TestToken is PromoCodeToken, PausableToken {
     mapping (address => uint256) contributions;
     uint256 public tokenSold = 0; 
     uint256 public etherRaised = 0; 
-    address multisig = 0x14723a09acff6d2a60dcdf7aa4aff308fddc160c;
+    address multisig = 0x0;
     uint256 rate = 0.0024 ether;
 
-    function TestToken() public {
-        totalSupply_ = 17000000;
+    function TestToken(address multisigadd, uint initialSupply) public {
+        totalSupply_ = initialSupply;
+        multisig = multisigadd;
   	}
     //Fallback function when receiving Ether.
     function() payable public {
