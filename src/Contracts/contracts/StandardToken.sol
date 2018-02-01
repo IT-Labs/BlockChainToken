@@ -13,16 +13,10 @@ using SafeMath for uint256;
   function totalSupply() public view returns (uint256) {
     return totalSupply_;
   }
-    /**
-   * @dev Fix for the ERC20 short address attack.
-   */
-  modifier onlyPayloadSize(uint size) {
-     require(msg.data.length >= size + 4);
-     _;
-  }
 
 
-  function transfer(address _to, uint256 _value) public onlyPayloadSize(2 * 32) returns (bool success) {
+
+  function transfer(address _to, uint256 _value) public returns (bool success) {
     require(_to != address(0));
     require(_value <= balances[msg.sender]);
 
@@ -35,7 +29,7 @@ using SafeMath for uint256;
     return balances[_owner];
   }
   
-  function transferFrom(address _from, address _to, uint _value) public onlyPayloadSize(3 * 32) returns (bool success) {
+  function transferFrom(address _from, address _to, uint _value) public returns (bool success) {
     require(_to != address(0));
     require(_value <= balances[_from]);
     require(_value <= allowed[_from][msg.sender]);
