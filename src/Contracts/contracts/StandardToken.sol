@@ -36,7 +36,7 @@ using SafeMath for uint256;
   }
   
   function transferFrom(address _from, address _to, uint _value) public onlyPayloadSize(3 * 32) returns (bool success) {
-     require(_to != address(0));
+    require(_to != address(0));
     require(_value <= balances[_from]);
     require(_value <= allowed[_from][msg.sender]);
     
