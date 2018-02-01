@@ -2,20 +2,19 @@ pragma solidity ^0.4.18;
 
 import './PromoCodeToken.sol';
 import './PausableToken.sol';
-import './MintableToken.sol';
 import './TokenVesting.sol';
 
-contract TestToken is PromoCodeToken, PausableToken, MintableToken {
+contract TestToken is PromoCodeToken, PausableToken {
     string public constant name = "Test Token";
     string public constant symbol = "TTT";
     uint256 public constant decimals = 18;
-    uint256 public constant VESTING_CLIFF = 25 weeks;
-    uint256 public constant VESTING_DURATION = 2 years;
+    uint256 public constant VESTING_CLIFF = 27 weeks;
+    uint256 public constant VESTING_DURATION = 1 years;
 
     mapping (address => uint256) public contributions;
     uint256 public tokenSold = 0; 
-    uint256 public etherRaised = 0; 
-    address multisig = 0x0;
+    uint256 public weiRaised = 0; 
+    address multisig;
     uint256 rate = 0.0024 ether;
     mapping (address => TokenVesting) public vestedTokens;
 
@@ -29,19 +28,23 @@ contract TestToken is PromoCodeToken, PausableToken, MintableToken {
         buyTokens("");
     }
 
-    //Allow addresses to buy token for another account
+    //Allow addresses to buy tokens
     function buyTokens(string _promoCode) payable public whenNotPaused {
         require(msg.value > 0);
         
-        uint256 amount = msg.value.div(calculateWithPromo(rate, _promoCode)); //decimals=18, so no need to adjust for unit
+        uint256 amount = msg.value.div(calculateWithPromo(rate, _promoCode)); 
         require(amount <= balances[owner]); 
         
         transferTokens(owner, msg.sender, amount);
 
         contributions[msg.sender] = contributions[msg.sender].add(msg.value);
         tokenSold = tokenSold.add(amount);
-        etherRaised = etherRaised.add(msg.value);
-        require(!multisig.send(msg.value)); //immediately send Ether to multisig address        
+        weiRaised = weiRaised.add(msg.value);
+        forwardFunds();   
+    }
+    // send ether to the fund collection wallet
+    function forwardFunds() internal {
+        multisig.transfer(msg.value);
     }
 
     function transferTokens(address _from, address _to, uint256 _value) private whenNotPaused {
