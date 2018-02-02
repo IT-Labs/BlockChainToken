@@ -32,9 +32,7 @@ contract TestToken is RateToken, PausableToken {
     function buyTokens() payable public whenNotPaused {
         require(msg.value > 0);
         
-        uint256 tokens = msg.value.div(getRate(msg.sender, msg.value)); 
-        require(tokens <= balances[owner]); 
-        
+        uint256 tokens = calculateTokens(msg.sender, msg.value); 
         transferTokens(owner, msg.sender, tokens);
 
         contributions[msg.sender] = contributions[msg.sender].add(msg.value);
@@ -49,8 +47,6 @@ contract TestToken is RateToken, PausableToken {
     }
 
     function transferTokens(address _from, address _to, uint256 _value) private whenNotPaused {
-        require(_to != address(0));
-        require(_from != address(0));
         require(_value <= balances[_from]);
         
         balances[_from] = balances[_from].sub(_value);
@@ -59,7 +55,7 @@ contract TestToken is RateToken, PausableToken {
     }
 
     function createVestedToken(address _beneficiary, uint256 _amount) onlyOwner public returns (bool) {
-        var vestedToken = new TokenVesting(_beneficiary, now, VESTING_CLIFF, VESTING_DURATION, true);
+        var vestedToken = new TokenVesting(_beneficiary, now, VESTING_CLIFF, VESTING_DURATION, false);
         vestedTokens[_beneficiary] = vestedToken;
         address vestedAddress = address(vestedToken);
         transferTokens(owner, vestedAddress, _amount); 
