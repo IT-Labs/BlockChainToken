@@ -49,8 +49,6 @@ contract TestToken is RateToken, PausableToken {
     }
 
     function transferTokens(address _from, address _to, uint256 _value) private whenNotPaused {
-        require(_to != address(0));
-        require(_from != address(0));
         require(_value <= balances[_from]);
         
         balances[_from] = balances[_from].sub(_value);

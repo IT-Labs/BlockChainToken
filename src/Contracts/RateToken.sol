@@ -13,6 +13,10 @@ contract RateToken is Pausable {
     uint256 rate = 0.0024 ether;
 
     function addDiscount(address _buyer, uint256 _minTokens, uint256 _percent) public onlyOwner returns (bool) {
+        require(_buyer != address(0));
+        require(_minTokens > 0);
+        require(_percent > 0);
+        require(_percent < 90);
         Discount memory discount;
         discount.minTokens = _minTokens;
         discount.percent = _percent;
