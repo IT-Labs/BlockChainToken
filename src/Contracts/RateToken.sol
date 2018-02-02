@@ -9,7 +9,7 @@ contract RateToken is Pausable {
         uint256 minTokens;
         uint256 percent;
     }
-    mapping(string => Discount) private discounts;
+    mapping(address => Discount) private discounts;
     uint256 rate = 0.0024 ether;
 
     function addDiscount(address _buyer, uint256 _minTokens, uint256 _percent) public onlyOwner returns (bool) {
@@ -21,11 +21,11 @@ contract RateToken is Pausable {
     }
 
     function removeDiscount(address _buyer) internal {
-        delete(discounts(_buyer));
+        delete(discounts[_buyer]);
     }
 
-    function getRate(address _buyer, uint256 _buyerAmountInWei) internal returns (uint256) {
-        uint256 discount = discounts[_buyer];
+    function getRate(address _buyer, uint256 _buyerAmountInWei) internal view returns (uint256) {
+        Discount storage discount = discounts[_buyer];
         if (discount.minTokens == 0) {
             return rate;
         }
@@ -37,7 +37,7 @@ contract RateToken is Pausable {
         return newRate;
     }   
     
-    function updateRate(uint _rateInWei) onlyOwner {
+    function updateRate(uint _rateInWei) onlyOwner public {
         rate = _rateInWei;
     }
     

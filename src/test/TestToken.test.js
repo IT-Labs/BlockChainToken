@@ -49,7 +49,7 @@ contract('TestToken', accounts => {
     const ownerTokens = await token.balanceOf(owner);
     const multisigWei = web3.eth.getBalance(multisig);
 
-    await token.buyTokens(promoCode, { from: buyer, value: totalPrice });
+    await token.buyTokens({ from: buyer, value: totalPrice });
 
     //Post State
     const buyerTokensPost = await token.balanceOf(buyer);
