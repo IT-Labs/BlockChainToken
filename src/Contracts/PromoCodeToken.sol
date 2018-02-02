@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
-import './StandardToken.sol';
-import './SafeMath.sol';
-import './Pausable.sol';
+import '../node_modules/zeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
+import '../node_modules/zeppelin-solidity/contracts/math/SafeMath.sol';
+import '../node_modules/zeppelin-solidity/contracts/lifecycle/Pausable.sol';
 
 contract PromoCodeToken is Pausable {
     using SafeMath for uint256;

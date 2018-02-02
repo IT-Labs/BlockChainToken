@@ -1,5 +1,6 @@
 
-src/Contracts/build
+src/build
+src/node_modules
 
 bin/
 /.vscode
