@@ -1,10 +1,10 @@
 pragma solidity ^0.4.18;
 
-import './PromoCodeToken.sol';
+import './RateToken.sol';
 import '../node_modules/zeppelin-solidity/contracts/token/ERC20/PausableToken.sol';
 import '../node_modules/zeppelin-solidity/contracts/token/ERC20/TokenVesting.sol';
 
-contract TestToken is PromoCodeToken, PausableToken {
+contract TestToken is RateToken, PausableToken {
     string public constant name = "Test Token";
     string public constant symbol = "TTT";
     uint256 public constant decimals = 18;
@@ -15,7 +15,7 @@ contract TestToken is PromoCodeToken, PausableToken {
     uint256 public tokenSold = 0; 
     uint256 public weiRaised = 0; 
     address multisig;
-    uint256 rate = 0.0024 ether;
+    
     mapping (address => TokenVesting) public vestedTokens;
 
     function TestToken(address multisigadd, uint initialSupply) public {
@@ -25,21 +25,22 @@ contract TestToken is PromoCodeToken, PausableToken {
   	}
     //Fallback function when receiving Ether.
     function() payable public {
-        buyTokens("");
+        buyTokens();
     }
 
     //Allow addresses to buy tokens
-    function buyTokens(string _promoCode) payable public whenNotPaused {
+    function buyTokens() payable public whenNotPaused {
         require(msg.value > 0);
         
-        uint256 amount = msg.value.div(calculateWithPromo(rate, _promoCode)); 
-        require(amount <= balances[owner]); 
+        uint256 tokens = msg.value.div(getRate(msg.sender, msg.value)); 
+        require(tokens <= balances[owner]); 
         
-        transferTokens(owner, msg.sender, amount);
+        transferTokens(owner, msg.sender, tokens);
 
         contributions[msg.sender] = contributions[msg.sender].add(msg.value);
-        tokenSold = tokenSold.add(amount);
+        tokenSold = tokenSold.add(tokens);
         weiRaised = weiRaised.add(msg.value);
+        removeDiscount(msg.sender);
         forwardFunds();   
     }
     // send ether to the fund collection wallet
