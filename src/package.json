@@ -7,10 +7,6 @@
     "test": "test"
   },
   "dependencies": {
-    "ethereumjs-testrpc": "^6.0.3",
-    "truffle": "^3.4.11",
-    "truffle-contract": "^1.1.11",
-    "web3": "^1.0.0-beta.23",
     "zeppelin-solidity": "git+https://git@github.com/OpenZeppelin/zeppelin-solidity.git"
   },
   "scripts": {
