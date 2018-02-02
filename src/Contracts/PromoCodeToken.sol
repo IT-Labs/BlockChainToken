@@ -1,6 +1,5 @@
 pragma solidity ^0.4.18;
 
-import '../node_modules/zeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
 import '../node_modules/zeppelin-solidity/contracts/math/SafeMath.sol';
 import '../node_modules/zeppelin-solidity/contracts/lifecycle/Pausable.sol';
 
