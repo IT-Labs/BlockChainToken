@@ -18,9 +18,9 @@ contract TestToken is RateToken, PausableToken {
     
     mapping (address => TokenVesting) public vestedTokens;
 
-    function TestToken(address multisigadd, uint initialSupply) public {
-        totalSupply_ = initialSupply;
-        multisig = multisigadd;
+    function TestToken(address _multisigadd, uint _initialRate) public RateToken(_initialRate) {
+        totalSupply_ = 73000000;
+        multisig = _multisigadd;
         balances[owner] = totalSupply_;
   	}
     //Fallback function when receiving Ether.
@@ -36,35 +36,44 @@ contract TestToken is RateToken, PausableToken {
         transferTokens(owner, msg.sender, tokens);
 
         contributions[msg.sender] = contributions[msg.sender].add(msg.value);
-        tokenSold = tokenSold.add(tokens);
         weiRaised = weiRaised.add(msg.value);
+        markTokenSold(tokens);
         removeDiscount(msg.sender);
-        forwardFunds();   
-    }
-    // send ether to the fund collection wallet
-    function forwardFunds() internal {
         multisig.transfer(msg.value);
     }
 
-    function transferTokens(address _from, address _to, uint256 _value) private whenNotPaused {
-        require(_value <= balances[_from]);
-        
-        balances[_from] = balances[_from].sub(_value);
-        balances[_to] = balances[_to].add(_value);        
-        Transfer(_from, _to, _value);
+    function markTokenSold(uint256 _tokens) private {
+        tokenSold = tokenSold.add(_tokens);
     }
 
-    function createVestedToken(address _beneficiary, uint256 _amount) onlyOwner public returns (bool) {
-        var vestedToken = new TokenVesting(_beneficiary, now, VESTING_CLIFF, VESTING_DURATION, false);
-        vestedTokens[_beneficiary] = vestedToken;
-        address vestedAddress = address(vestedToken);
-        transferTokens(owner, vestedAddress, _amount); 
+    function markTransferTokens(address _to, uint256 _tokens) onlyOwner public returns (bool) {
+        require(_tokens > 0);
+        require(_to != address(0));
+
+        transferTokens(owner, _to, _tokens);
+        markTokenSold(_tokens);
         return true;
     }
 
-    function spendToken(uint256 _amount) public returns (bool) {
-        require(balances[msg.sender] > _amount);
-        transferTokens(msg.sender, owner, _amount);
+    function transferTokens(address _from, address _to, uint256 _tokens) private {
+        require(_tokens <= balances[_from]);
+        
+        balances[_from] = balances[_from].sub(_tokens);
+        balances[_to] = balances[_to].add(_tokens);        
+        Transfer(_from, _to, _tokens);
+    }
+
+    function createVestedToken(address _beneficiary, uint256 _tokens) onlyOwner public returns (bool) {
+        var vestedToken = new TokenVesting(_beneficiary, now, VESTING_CLIFF, VESTING_DURATION, false);
+        vestedTokens[_beneficiary] = vestedToken;
+        address vestedAddress = address(vestedToken);
+        transferTokens(owner, vestedAddress, _tokens); 
+        return true;
+    }
+
+    function spendToken(uint256 _tokens) public returns (bool) {
+        require(balances[msg.sender] > _tokens);
+        transferTokens(msg.sender, owner, _tokens);
         return true;
     }
 
