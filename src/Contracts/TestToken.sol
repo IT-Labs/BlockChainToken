@@ -3,11 +3,9 @@ pragma solidity ^0.4.18;
 import './RateToken.sol';
 import '../node_modules/zeppelin-solidity/contracts/token/ERC20/PausableToken.sol';
 import '../node_modules/zeppelin-solidity/contracts/token/ERC20/TokenVesting.sol';
+import '../node_modules/zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
 
-contract TestToken is RateToken, PausableToken {
-    string public constant name = "Test Token";
-    string public constant symbol = "TTT";
-    uint256 public constant decimals = 18;
+contract TestToken is RateToken, PausableToken, DetailedERC20 {
     uint256 public constant VESTING_CLIFF = 27 weeks;
     uint256 public constant VESTING_DURATION = 1 years;
 
@@ -18,7 +16,7 @@ contract TestToken is RateToken, PausableToken {
     
     mapping (address => TokenVesting) public vestedTokens;
 
-    function TestToken(address _multisigadd, uint _initialRate) public RateToken(_initialRate) {
+    function TestToken(address _multisigadd, uint _initialRate) public RateToken(_initialRate) DetailedERC20("Test Token", "TTT", 18) {
         totalSupply_ = 73000000;
         multisig = _multisigadd;
         balances[owner] = totalSupply_;
