@@ -27,8 +27,8 @@ contract RateToken is Ownable {
         discounts[_buyer] = discount;
         return true;
     }
-
-    function removeDiscount(address _buyer) public onlyOwner {
+    
+    function removeDiscount(address _buyer) internal {
         delete(discounts[_buyer]);
     }
 
