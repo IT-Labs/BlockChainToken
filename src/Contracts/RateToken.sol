@@ -46,6 +46,7 @@ contract RateToken is Ownable {
     }   
     
     function setRate(uint _rateInWei) onlyOwner public {
+        require(_rateInWei > 0);
         rate = _rateInWei;
     }  
 
