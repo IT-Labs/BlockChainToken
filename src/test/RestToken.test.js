@@ -74,7 +74,7 @@ contract('RestToken', accounts => {
             });
     });
 
-    it('set rate, not owner', async function(){
+    it('set rate, not owner', async function () {
         const tokenRateWei = 10000;
 
         return token.setRate(tokenRateWei, {
@@ -117,7 +117,9 @@ contract('RestToken', accounts => {
 
         assert.equal(weiExpected, weiNeeded);
 
-        //remove discount
+        assert(await token.removeDiscount(buyer, {
+            from: owner
+        }));
     });
 
     it('calculate wei amount for tokens with discount, send lower number of tokens than allowed', async function () {
@@ -128,18 +130,20 @@ contract('RestToken', accounts => {
             from: owner
         }));
 
-        return token.calculateWeiNeeded(buyer, tokens, {
-            from: buyer
-        })
-        .then(assert.fail)
-        .catch(function (error) {
-            assert.equal(
-                error.message,
-                'VM Exception while processing transaction: revert'
-            )
-        });
-        
-        //remove discount
+        await token.calculateWeiNeeded(buyer, tokens, {
+                from: buyer
+            })
+            .then(assert.fail)
+            .catch(function (error) {
+                assert.equal(
+                    error.message,
+                    'VM Exception while processing transaction: revert'
+                )
+            });
+
+        assert(await token.removeDiscount(buyer, {
+            from: owner
+        }));
     });
 
     it('calculate wei amount for tokens, invalid address', async function () {
@@ -147,15 +151,15 @@ contract('RestToken', accounts => {
         const invalidAddress = 0x0;
 
         return token.calculateWeiNeeded(invalidAddress, tokens, {
-            from: buyer
-        })
-        .then(assert.fail)
-        .catch(function (error) {
-            assert.equal(
-                error.message,
-                'VM Exception while processing transaction: revert'
-            )
-        });
+                from: buyer
+            })
+            .then(assert.fail)
+            .catch(function (error) {
+                assert.equal(
+                    error.message,
+                    'VM Exception while processing transaction: revert'
+                )
+            });
     });
 
     //addDiscount
@@ -238,5 +242,42 @@ contract('RestToken', accounts => {
                     'VM Exception while processing transaction: revert'
                 )
             });
+    });
+
+    it('remove discount', async function () {
+        const tokens = 10;
+        const discountPercent = 10;
+
+        assert(await token.addDiscount(buyer, tokens, discountPercent, {
+            from: owner
+        }));
+
+        assert(await token.removeDiscount(buyer, {
+            from: owner
+        }));
+    });
+
+    it('remove discount, not owner', async function () {
+        const tokens = 10;
+        const discountPercent = 10;
+
+        assert(await token.addDiscount(buyer, tokens, discountPercent, {
+            from: owner
+        }));
+
+        await token.removeDiscount(buyer, {
+                from: buyer
+            })
+            .then(assert.fail)
+            .catch(function (error) {
+                assert.equal(
+                    error.message,
+                    'VM Exception while processing transaction: revert'
+                )
+            });
+
+        assert(await token.removeDiscount(buyer, {
+            from: owner
+        }));
     });
 });
