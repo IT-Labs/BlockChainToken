@@ -2,8 +2,8 @@ var CaerusToken = artifacts.require("CaerusToken");
 var moment = require('moment');
 var async = require('async');
 
-const tokenAddress = '0x66e2dccd2df14da9246dc997b19544daf42aada4'
-const ownerAddress = '0xd7e43d0ea954767df214431f946bf51c7cbdf5d0'
+const tokenAddress = '0x7e599c8a547641983db9bb93e24dd650738c8ad3'
+const ownerAddress = '0x5bf679526bc2589e4ec869c8ea0db415bba8e804'
 
 const founders = [ //Founders                                        19970000
     { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens: 10000000 }, 
@@ -45,7 +45,7 @@ const tgeRetail = [ //TGE & Retail                                   34000000
 module.exports = function (callback) {
     
     const caerusToken = CaerusToken.at(tokenAddress);
-    caerusToken.balance(ownerAddress).then((a)=> console.log(`Owner balance: ${a}`));
+    caerusToken.balanceOf(ownerAddress).then((a)=> console.log(`Owner balance: ${a}`));
 
     async.eachSeries(founders, ({ address, tokens }, cb) => {
     console.log(`Assigning ${address} (${tokens} CAER). Cliff ${formatDate(cliff)} (${cliff}) Vesting ${formatDate(duration)} (${duration})`);
@@ -56,11 +56,11 @@ module.exports = function (callback) {
         duration,
         tokens, { gas: 3e5, from: ownerAddress })
       .then(() => { console.log('tx submitted yay'); cb() })
-      .catch(e => { console.log(e); console.log('stopping operation'); callback() })
+      .catch(e => { console.log(e); console.log('stopping founders operation'); callback() })
      
     }, callback);
 
-    caerusToken.balance(ownerAddress).then((a)=> console.log(`Owner balance: ${a}`));
+    caerusToken.balanceOf(ownerAddress).then((a)=> console.log(`Owner balance: ${a}`));
 
     async.eachSeries(tgeRetail, ({ address, tokens }, cb) => {
       console.log(`Assigning tgeRetail ${address} ${tokens} tokens.`);
@@ -68,11 +68,11 @@ module.exports = function (callback) {
         .markTransferTokens(address,
           tokens, { gas: 3e5, from: ownerAddress })
         .then(() => { console.log('tx submitted yay'); cb() })
-        .catch(e => { console.log(e); console.log('stopping operation'); callback() })
+        .catch(e => { console.log(e); console.log('stopping tgeRetail operation'); callback() })
        
       }, callback);
 
-    caerusToken.balance(ownerAddress).then((a)=> console.log(`Owner balance: ${a}`));
+    caerusToken.balanceOf(ownerAddress).then((a)=> console.log(`Owner balance: ${a}`));
 
     async.eachSeries(launchPartners, ({ address, tokens }, cb) => {
       console.log(`Assigning launchPartner ${address} ${tokens} tokens.`);
@@ -80,7 +80,7 @@ module.exports = function (callback) {
         .markTransferTokens(address,
           tokens, { gas: 3e5, from: ownerAddress })
         .then(() => { console.log('tx submitted yay'); cb() })
-        .catch(e => { console.log(e); console.log('stopping operation'); callback() })
+        .catch(e => { console.log(e); console.log('stopping launchPartners operation'); callback() })
        
       }, callback);
     
