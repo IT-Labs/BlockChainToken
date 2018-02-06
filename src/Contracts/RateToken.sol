@@ -12,9 +12,17 @@ contract RateToken is Ownable {
     mapping(address => Discount) private discounts;
     uint256 public rate;
 
+    event RateSet(uint256 rate);
+
     function RateToken(uint256 _initilRate) public {
         rate = _initilRate;
     }
+
+    function setRate(uint _rateInWei) onlyOwner public {
+        require(_rateInWei > 0);
+        rate = _rateInWei;
+        RateSet(rate);
+    } 
 
     function addDiscount(address _buyer, uint256 _minTokens, uint256 _percent) public onlyOwner returns (bool) {
         require(_buyer != address(0));
@@ -27,8 +35,28 @@ contract RateToken is Ownable {
         discounts[_buyer] = discount;
         return true;
     }
+
+    function removeDiscount(address _buyer) public onlyOwner { 
+        require(_buyer != address(0));
+        removeExistingDiscount(_buyer);
+    }
+
+    function calculateWeiNeeded(address _buyer, uint _tokens) public view returns (uint256) {
+        require(_buyer != address(0));
+        require(_tokens > 0);
+
+        Discount storage discount = discounts[_buyer];
+        if (discount.minTokens == 0) {
+            return _tokens.mul(rate);
+        }
+        require(_tokens >= discount.minTokens);
+
+        uint256 discountRate = rate.mul(discount.percent).div(100);
+        uint256 newRate = rate.sub(discountRate);
+        return _tokens.mul(newRate);
+    }
     
-    function removeDiscount(address _buyer) internal {
+    function removeExistingDiscount(address _buyer) internal {
         delete(discounts[_buyer]);
     }
 
@@ -45,23 +73,4 @@ contract RateToken is Ownable {
         return tokens;
     }   
     
-    function setRate(uint _rateInWei) onlyOwner public {
-        require(_rateInWei > 0);
-        rate = _rateInWei;
-    }  
-
-    function calculateWeiNeeded(address _buyer, uint _tokens) public view returns (uint256) {
-        require(_buyer != address(0));
-        require(_tokens > 0);
-
-        Discount storage discount = discounts[_buyer];
-        if (discount.minTokens == 0) {
-            return _tokens.mul(rate);
-        }
-        require(_tokens >= discount.minTokens);
-
-        uint256 discountRate = rate.mul(discount.percent).div(100);
-        uint256 newRate = rate.sub(discountRate);
-        return _tokens.mul(newRate);
-    }
 }
