@@ -63,7 +63,7 @@ contract TestToken is RateToken, PausableToken, DetailedERC20 {
     }
 
     function spendToken(uint256 _tokens) public returns (bool) {
-        
+        require(_tokens > 0);
         transferTokens(msg.sender, owner, _tokens);
         TokensSpent(msg.sender, _tokens);
 

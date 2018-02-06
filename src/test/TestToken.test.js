@@ -54,10 +54,10 @@ contract('TestToken', accounts => {
     const ownerTokens = await token.balanceOf(owner);
     const multisigWei = web3.eth.getBalance(multisig);
 
-    await token.buyTokens({
+    assert(await token.buyTokens({
       from: buyer,
       value: totalPrice
-    });
+    }));
 
     //Post State
     const buyerTokensPost = await token.balanceOf(buyer);
@@ -92,10 +92,10 @@ contract('TestToken', accounts => {
     const ownerTokens = await token.balanceOf(owner);
     const multisigWei = web3.eth.getBalance(multisig);
 
-    await token.buyTokens({
+    assert(await token.buyTokens({
       from: buyer,
       value: totalPrice
-    });
+    }));
 
     //Post State
     const buyerTokensPost = await token.balanceOf(buyer);
@@ -111,10 +111,10 @@ contract('TestToken', accounts => {
     const expectedResult = multisigWei - (-1 * totalPrice);
     assert.equal(multisigWeiPost, expectedResult);
 
-    await token.buyTokens({
+    assert(await token.buyTokens({
       from: buyer,
       value: totalPrice
-    });
+    }));
 
     //Second Buy State
     const buyerTokensSecondBuy = await token.balanceOf(buyer);
@@ -163,6 +163,96 @@ contract('TestToken', accounts => {
       });
   });
 
+  it('buy tokens from paused contract, then unpaused and try to buy again', async function () {
+    const tokens = 1;
+    const totalPrice = tokenRateWei * tokens;
+
+    assert(await token.pause({
+      from: owner
+    }));
+
+    await token.buyTokens({
+        from: buyer,
+        value: totalPrice
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+
+    assert(await token.unpause({
+      from: owner
+    }));
+
+    //Pre state
+    const buyerTokens = await token.balanceOf(buyer);
+    const buyerWei = web3.eth.getBalance(buyer);
+
+    const ownerTokens = await token.balanceOf(owner);
+    const multisigWei = web3.eth.getBalance(multisig);
+
+    assert(await token.buyTokens({
+      from: buyer,
+      value: totalPrice
+    }));
+
+    //Post State
+    const buyerTokensPost = await token.balanceOf(buyer);
+    const buyerWeiPost = web3.eth.getBalance(buyer);
+
+    const ownerTokensPost = await token.balanceOf(owner);
+    const multisigWeiPost = web3.eth.getBalance(multisig);
+
+    assert(buyerTokensPost.eq(buyerTokens + tokens));
+    assert(buyerWeiPost <= (buyerWei - totalPrice));
+    assert(ownerTokensPost.eq(ownerTokens - tokens));
+
+    const expectedResult = multisigWei - (-1 * totalPrice);
+    assert.equal(multisigWeiPost, expectedResult);
+  });
+
+  //pause
+  it('pause contract, not owner', async function () {
+    const tokens = 0;
+
+    return token.pause({
+        from: buyer
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  });
+
+  it('unpause contract, not owner', async function () {
+    const tokens = 0;
+
+    assert(await token.pause({
+      from: owner
+    }));
+
+    await token.unpause({
+        from: buyer
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+
+    assert(await token.unpause({
+      from: owner
+    }));
+  });
+
   //markTransferTokens
   it('transfer token from owner to specific address', async function () {
     const tokens = 100;
@@ -171,9 +261,9 @@ contract('TestToken', accounts => {
     const buyerTokens = await token.balanceOf(buyer);
     const ownerTokens = await token.balanceOf(owner);
 
-    await token.markTransferTokens(buyer, tokens, {
+    assert(await token.markTransferTokens(buyer, tokens, {
       from: owner
-    });
+    }));
 
     //Post State
     const buyerTokensPost = await token.balanceOf(buyer);
@@ -219,6 +309,66 @@ contract('TestToken', accounts => {
 
     return token.markTransferTokens(invalidAddress, tokens, {
         from: owner
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  });
+
+  //spendToken
+  it('spend tokens', async function () {
+    const tokens = 1;
+    const totalPrice = tokenRateWei * tokens;
+
+    const buyerTokens = await token.balanceOf(buyer);
+    const ownerTokens = await token.balanceOf(owner);
+
+    assert(await token.buyTokens({
+      from: buyer,
+      value: totalPrice
+    }));
+
+    const buyerTokensPostBuying = await token.balanceOf(buyer);
+    const ownerTokensPostBuying = await token.balanceOf(owner);
+
+    assert(buyerTokensPostBuying.eq(buyerTokens + tokens));
+    assert(ownerTokensPostBuying.eq(ownerTokens - tokens));
+
+    assert(await token.spendToken(tokens, {
+      from: buyer
+    }));
+
+    const buyerTokensPostSpending = await token.balanceOf(buyer);
+    const ownerTokensPostSpending = await token.balanceOf(owner);
+
+    assert(buyerTokensPostSpending.eq(buyerTokensPostBuying - tokens));
+    assert(ownerTokensPostSpending.eq(ownerTokensPostBuying - (-1 * tokens)));
+  });
+
+  it('spend tokens, larger amount of tokens', async function () {
+    const buyerTokens = await token.balanceOf(buyer);
+
+    token.spendToken((buyerTokens + 1), {
+        from: buyer
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  });
+
+  it('spend 0 tokens', async function () {
+    const tokens = 0;
+
+    token.spendToken((tokens), {
+        from: buyer
       })
       .then(assert.fail)
       .catch(function (error) {
