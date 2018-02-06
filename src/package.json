@@ -1,13 +1,15 @@
 {
   "name": "CaerusToken",
   "version": "1.0.0",
-  "description": "",
+  "description": "Caerus token",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"
   },
   "dependencies": {
-    "zeppelin-solidity": "git+https://git@github.com/OpenZeppelin/zeppelin-solidity.git"
+    "zeppelin-solidity": "git+https://git@github.com/OpenZeppelin/zeppelin-solidity.git",
+    "moment": "^2.20.1",
+    "async": "^2.6.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
