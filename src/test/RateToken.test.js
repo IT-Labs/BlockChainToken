@@ -1,6 +1,6 @@
-const TestToken = artifacts.require('../contracts/TestToken.sol');
+const RateToken = artifacts.require('../contracts/RateToken.sol');
 
-contract('RestToken', accounts => {
+contract('RateToken', accounts => {
     let token;
     const owner = accounts[0];
     const buyer = accounts[1];
@@ -10,7 +10,7 @@ contract('RestToken', accounts => {
     const txPriceWei = 20;
 
     beforeEach(async function () {
-        token = await TestToken.new(multisig, tokenRateWei, {
+        token = await RateToken.new(tokenRateWei, {
             from: owner
         });
     });
