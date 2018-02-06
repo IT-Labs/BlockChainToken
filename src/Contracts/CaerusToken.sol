@@ -77,7 +77,7 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
 
     function transferTokens(address _from, address _to, uint256 _tokens) private {
         require(_tokens > 0);
-        require(balances[_from] > _tokens);
+        require(balances[_from] >= _tokens);
         
         balances[_from] = balances[_from].sub(_tokens);
         balances[_to] = balances[_to].add(_tokens);        

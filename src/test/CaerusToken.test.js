@@ -1,16 +1,17 @@
-const TestToken = artifacts.require('../contracts/CaerusToken.sol');
+const CaerusToken = artifacts.require('CaerusToken');
 
 contract('CaerusToken', accounts => {
   let token;
   const owner = accounts[0];
   const buyer = accounts[1];
-  const multisig = accounts[9];
+  const transferAddress = accounts[9];
   const initialSupply = 73000000;
   const tokenRate = 0.0024;
   const tokenRateWei = web3.toWei(tokenRate, 'ether');
+  const txPriceWei = 20;
 
   beforeEach(async function () {
-    token = await CaerusToken.new(multisig, tokenRateWei, {
+    token = await CaerusToken.new(transferAddress, tokenRateWei, {
       from: owner
     });
   });
@@ -52,7 +53,7 @@ contract('CaerusToken', accounts => {
     const buyerWei = web3.eth.getBalance(buyer);
 
     const ownerTokens = await token.balanceOf(owner);
-    const multisigWei = web3.eth.getBalance(multisig);
+    const multisigWei = web3.eth.getBalance(transferAddress);
 
     assert(await token.buyTokens({
       from: buyer,
@@ -64,7 +65,7 @@ contract('CaerusToken', accounts => {
     const buyerWeiPost = web3.eth.getBalance(buyer);
 
     const ownerTokensPost = await token.balanceOf(owner);
-    const multisigWeiPost = web3.eth.getBalance(multisig);
+    const multisigWeiPost = web3.eth.getBalance(transferAddress);
 
     assert(buyerTokensPost.eq(buyerTokens + tokens));
     assert(buyerWeiPost <= (buyerWei - totalPrice));
@@ -90,7 +91,7 @@ contract('CaerusToken', accounts => {
     const buyerWei = web3.eth.getBalance(buyer);
 
     const ownerTokens = await token.balanceOf(owner);
-    const multisigWei = web3.eth.getBalance(multisig);
+    const multisigWei = web3.eth.getBalance(transferAddress);
 
     assert(await token.buyTokens({
       from: buyer,
@@ -102,7 +103,7 @@ contract('CaerusToken', accounts => {
     const buyerWeiPost = web3.eth.getBalance(buyer);
 
     const ownerTokensPost = await token.balanceOf(owner);
-    const multisigWeiPost = web3.eth.getBalance(multisig);
+    const multisigWeiPost = web3.eth.getBalance(transferAddress);
 
     assert(buyerTokensPost.eq(buyerTokens + expectedTokens));
     assert(buyerWeiPost <= (buyerWei - totalPrice));
@@ -121,7 +122,7 @@ contract('CaerusToken', accounts => {
     const buyerWeiSecondBuy = web3.eth.getBalance(buyer);
 
     const ownerTokensSecondBuy = await token.balanceOf(owner);
-    const multisigWeiSecondBuy = web3.eth.getBalance(multisig);
+    const multisigWeiSecondBuy = web3.eth.getBalance(transferAddress);
 
     assert(buyerTokensSecondBuy.eq(buyerTokensPost - (-1 * tokens)));
     assert(buyerWeiSecondBuy <= (buyerWeiPost - totalPrice));
@@ -192,7 +193,7 @@ contract('CaerusToken', accounts => {
     const buyerWei = web3.eth.getBalance(buyer);
 
     const ownerTokens = await token.balanceOf(owner);
-    const multisigWei = web3.eth.getBalance(multisig);
+    const multisigWei = web3.eth.getBalance(transferAddress);
 
     assert(await token.buyTokens({
       from: buyer,
@@ -204,7 +205,7 @@ contract('CaerusToken', accounts => {
     const buyerWeiPost = web3.eth.getBalance(buyer);
 
     const ownerTokensPost = await token.balanceOf(owner);
-    const multisigWeiPost = web3.eth.getBalance(multisig);
+    const multisigWeiPost = web3.eth.getBalance(transferAddress);
 
     assert(buyerTokensPost.eq(buyerTokens + tokens));
     assert(buyerWeiPost <= (buyerWei - totalPrice));
@@ -377,5 +378,245 @@ contract('CaerusToken', accounts => {
           'VM Exception while processing transaction: revert'
         )
       });
+  });
+
+  //RateToken
+  //setRate
+  it('set new token rate', async function () {
+    const newTokenRate = 0.0012;
+    const newTokenRateWei = web3.toWei(newTokenRate, 'ether');
+
+    assert(await token.setRate(newTokenRateWei, {
+      from: owner
+    }));
+
+    const actualTokenRateWei = await token.rate();
+    assert.equal(newTokenRateWei, actualTokenRateWei);
+
+    assert(await token.setRate(tokenRateWei, {
+      from: owner
+    }));
+  });
+
+  it('set rate on 0', async function () {
+    const tokenRateWei = 0;
+
+    return token.setRate(tokenRateWei, {
+        from: owner
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  });
+
+  it('set rate, not owner', async function () {
+    const tokenRateWei = 10000;
+
+    return token.setRate(tokenRateWei, {
+        from: buyer
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  })
+
+  //calculateWeiNeeded
+  it('calculate wei amount for tokens without discount', async function () {
+    const tokens = 100;
+    const weiExpected = tokenRateWei * tokens;
+
+    const weiNeeded = await token.calculateWeiNeeded(buyer, tokens, {
+      from: buyer
+    });
+    assert.equal(weiExpected, weiNeeded);
+  });
+
+  it('calculate wei amount for tokens with discount', async function () {
+    const tokens = 100;
+    const discountPercent = 60;
+    const discountRate = tokenRate - (tokenRate * (discountPercent / 100));
+    const discountRateWei = web3.toWei(discountRate, 'ether');
+    const weiExpected = discountRateWei * tokens + txPriceWei;
+
+    assert(await token.addDiscount(buyer, tokens, discountPercent, {
+      from: owner
+    }));
+
+    const weiNeeded = await token.calculateWeiNeeded(buyer, tokens, {
+      from: buyer
+    });
+
+    assert.equal(weiExpected, weiNeeded);
+
+    assert(await token.removeDiscount(buyer, {
+      from: owner
+    }));
+  });
+
+  it('calculate wei amount for tokens with discount, send lower number of tokens than allowed', async function () {
+    const tokens = 100;
+    const discountPercent = 60;
+
+    assert(await token.addDiscount(buyer, tokens + 1, discountPercent, {
+      from: owner
+    }));
+
+    await token.calculateWeiNeeded(buyer, tokens, {
+        from: buyer
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+
+    assert(await token.removeDiscount(buyer, {
+      from: owner
+    }));
+  });
+
+  it('calculate wei amount for tokens, invalid address', async function () {
+    const tokens = 100;
+    const invalidAddress = 0x0;
+
+    return token.calculateWeiNeeded(invalidAddress, tokens, {
+        from: buyer
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  });
+
+  //addDiscount
+  it('add discount for 0 tokens', async function () {
+    const tokens = 0;
+    const discountPercent = 10;
+
+    return token.addDiscount(buyer, tokens, discountPercent, {
+        from: owner
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  });
+
+  it('add discount of 0%', async function () {
+    const tokens = 10;
+    const discountPercent = 0;
+
+    return token.addDiscount(buyer, tokens, discountPercent, {
+        from: owner
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  });
+
+  it('add discount of 100%', async function () {
+    const tokens = 10;
+    const discountPercent = 100;
+
+    return token.addDiscount(buyer, tokens, discountPercent, {
+        from: owner
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  });
+
+  it('add discount for invalid address', async function () {
+    const tokens = 10;
+    const discountPercent = 10;
+    const invalidAddress = 0x0;
+
+    return token.addDiscount(invalidAddress, tokens, discountPercent, {
+        from: owner
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  });
+
+  it('add discount, not owner', async function () {
+    const tokens = 10;
+    const discountPercent = 10;
+
+    return token.addDiscount(buyer, tokens, discountPercent, {
+        from: buyer
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  });
+
+  it('remove discount', async function () {
+    const tokens = 10;
+    const discountPercent = 10;
+
+    assert(await token.addDiscount(buyer, tokens, discountPercent, {
+      from: owner
+    }));
+
+    assert(await token.removeDiscount(buyer, {
+      from: owner
+    }));
+  });
+
+  it('remove discount, not owner', async function () {
+    const tokens = 10;
+    const discountPercent = 10;
+
+    assert(await token.addDiscount(buyer, tokens, discountPercent, {
+      from: owner
+    }));
+
+    await token.removeDiscount(buyer, {
+        from: buyer
+      })
+      .then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+
+    assert(await token.removeDiscount(buyer, {
+      from: owner
+    }));
   });
 });
