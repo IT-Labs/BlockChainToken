@@ -5,7 +5,7 @@ import '../node_modules/zeppelin-solidity/contracts/token/ERC20/PausableToken.so
 import '../node_modules/zeppelin-solidity/contracts/token/ERC20/TokenVesting.sol';
 import '../node_modules/zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
 
-contract TestToken is RateToken, PausableToken, DetailedERC20 {
+contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
     mapping (address => uint256) public contributions;
     uint256 public tokenSold = 0; 
     uint256 public weiRaised = 0; 
@@ -18,7 +18,7 @@ contract TestToken is RateToken, PausableToken, DetailedERC20 {
     event VestedTokenCreated(address indexed beneficiary, uint256 duration, uint256 tokens);
     event TokensSpent(address indexed tokensHolder, uint256 tokens);
 
-    function TestToken(address _transferAddress, uint _initialRate) public RateToken(_initialRate) DetailedERC20("Test Token", "TTT", 18) {
+    function CaerusToken(address _transferAddress, uint _initialRate) public RateToken(_initialRate) DetailedERC20("Caerus Token", "CAER", 18) {
         totalSupply_ = 73000000;
         transferAddress = _transferAddress;
         balances[owner] = totalSupply_;
@@ -33,8 +33,6 @@ contract TestToken is RateToken, PausableToken, DetailedERC20 {
         require(msg.value > 0);
         
         uint256 tokens = calculateTokens(msg.sender, msg.value);
-
-        require(tokens > 0); 
         transferTokens(owner, msg.sender, tokens);
 
         markTokenSold(tokens);
@@ -45,7 +43,6 @@ contract TestToken is RateToken, PausableToken, DetailedERC20 {
     }
 
     function markTransferTokens(address _to, uint256 _tokens) onlyOwner public returns (bool) {
-        require(_tokens > 0);
         require(_to != address(0));
 
         transferTokens(owner, _to, _tokens);
@@ -63,10 +60,8 @@ contract TestToken is RateToken, PausableToken, DetailedERC20 {
     }
 
     function spendToken(uint256 _tokens) public returns (bool) {
-        require(_tokens > 0);
         transferTokens(msg.sender, owner, _tokens);
         TokensSpent(msg.sender, _tokens);
-
         return true;
     }
 
@@ -75,14 +70,14 @@ contract TestToken is RateToken, PausableToken, DetailedERC20 {
         //  allowance to zero by calling `approve(_spender, 0)` if it is not
         //  already 0 to mitigate the race condition described here:
         //  https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-
         require(_value == 0 || allowed[msg.sender][_spender] == 0);
 
         return super.approve(_spender, _value);
     }
 
     function transferTokens(address _from, address _to, uint256 _tokens) private {
-        require(_tokens <= balances[_from]);
+        require(_tokens > 0);
+        require(balances[_from] > _tokens);
         
         balances[_from] = balances[_from].sub(_tokens);
         balances[_to] = balances[_to].add(_tokens);        

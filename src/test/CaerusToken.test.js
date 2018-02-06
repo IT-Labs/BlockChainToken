@@ -1,6 +1,6 @@
-const TestToken = artifacts.require('../contracts/TestToken.sol');
+const TestToken = artifacts.require('../contracts/CaerusToken.sol');
 
-contract('TestToken', accounts => {
+contract('CaerusToken', accounts => {
   let token;
   const owner = accounts[0];
   const buyer = accounts[1];
@@ -10,7 +10,7 @@ contract('TestToken', accounts => {
   const tokenRateWei = web3.toWei(tokenRate, 'ether');
 
   beforeEach(async function () {
-    token = await TestToken.new(multisig, tokenRateWei, {
+    token = await CaerusToken.new(multisig, tokenRateWei, {
       from: owner
     });
   });
@@ -18,12 +18,12 @@ contract('TestToken', accounts => {
   //Basic
   it('has a name', async function () {
     const name = await token.name();
-    assert.equal(name, 'Test Token');
+    assert.equal(name, 'Caerus Token');
   });
 
   it('has a symbol', async function () {
     const symbol = await token.symbol();
-    assert.equal(symbol, 'TTT');
+    assert.equal(symbol, 'CAER');
   });
 
   it('has 18 decimals', async function () {
