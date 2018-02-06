@@ -32,7 +32,9 @@ contract TestToken is RateToken, PausableToken, DetailedERC20 {
     function buyTokens() payable public whenNotPaused {
         require(msg.value > 0);
         
-        uint256 tokens = calculateTokens(msg.sender, msg.value); 
+        uint256 tokens = calculateTokens(msg.sender, msg.value);
+
+        require(tokens > 0); 
         transferTokens(owner, msg.sender, tokens);
 
         markTokenSold(tokens);
@@ -61,18 +63,20 @@ contract TestToken is RateToken, PausableToken, DetailedERC20 {
     }
 
     function spendToken(uint256 _tokens) public returns (bool) {
-        require(balances[msg.sender] > _tokens);
+        
         transferTokens(msg.sender, owner, _tokens);
         TokensSpent(msg.sender, _tokens);
+
         return true;
     }
 
     function approve(address _spender, uint _value) public returns (bool) {
-        // To change the approve amount you first have to reduce the addresses`
+        //  To change the approve amount you first have to reduce the addresses`
         //  allowance to zero by calling `approve(_spender, 0)` if it is not
         //  already 0 to mitigate the race condition described here:
         //  https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-        require ((_value != 0) && (allowed[msg.sender][_spender] != 0));
+
+        require(_value == 0 || allowed[msg.sender][_spender] == 0);
 
         return super.approve(_spender, _value);
     }

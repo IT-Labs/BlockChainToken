@@ -15,7 +15,7 @@ contract RateToken is Ownable {
     event RateSet(uint256 rate);
 
     function RateToken(uint256 _initilRate) public {
-        rate = _initilRate;
+        setRate(_initilRate);
     }
 
     function setRate(uint _rateInWei) onlyOwner public {
