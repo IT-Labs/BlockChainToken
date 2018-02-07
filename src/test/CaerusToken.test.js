@@ -4,7 +4,8 @@ contract('CaerusToken', accounts => {
   let token;
   const owner = accounts[0];
   const buyer = accounts[1];
-  const transferAddress = accounts[9];
+  const transferAddress = accounts[2];
+  const vestedBeneficiary = accounts[3];
   const initialSupply = 73000000;
   const tokenRate = 0.0024;
   const tokenRateWei = web3.toWei(tokenRate, 'ether');
@@ -379,6 +380,79 @@ contract('CaerusToken', accounts => {
       });
   });
 
+  //createVestedToken
+  // it('create vested token', async function () {
+  //   const tokens = 1000;
+  //   const now = new Date().getTime() / 1000;
+  //   const cliff = 10 * 1000;
+  //   const duration = 20 * 1000;
+  //   let vestedAddress = 0x0;
+
+  //   const buyerTokens = await token.balanceOf(buyer);
+  //   const ownerTokens = await token.balanceOf(owner);
+
+  //   assert(await token.createVestedToken(buyer, now, cliff, duration, tokens, {
+  //     from: owner
+  //   }));
+
+  //   const ownerTokensAfterVesting = await token.balanceOf(owner);
+  //   const buyerTokensAfterVesting = await token.balanceOf(buyer);
+  //   console.log(buyerTokensAfterVesting * 1);
+
+  //   assert.equal(ownerTokensAfterVesting, (ownerTokens - tokens));
+  //   assert.equal(buyerTokensAfterVesting * 1, buyerTokens * 1);
+
+  //   transferEvent = token.Transfer({
+  //     _from: owner
+  //   });
+
+  //   return new Promise((resolve, reject) => {
+  //     transferEvent.watch(function (error, result) {
+  //       if (!!error) {
+  //         console.log(err);
+  //         assert.fail;
+  //       }
+
+  //       assert.equal(owner, result.args.from);
+  //       assert.equal(tokens, result.args.value);
+
+  //       vestedAddress = result.args.to;
+
+  //       setTimeout(function () {
+  //         // await token.release(vestedAddress, {
+  //         //   from: buyer
+  //         // });
+  //         console.log(vestedAddress);
+  //         //const buyerTokensAfterDurationPeriod = await token.balanceOf(buyer);
+  //         console.log("--- After period ---");
+  //         console.log(vestedAddress);
+  //         console.log(buyerTokensAfterDurationPeriod * 1);
+  //         transferEvent.stopWatching();
+  //         resolve();
+  //       }, duration + 1000);
+  //     })
+  //   })
+  // });
+
+  it('create vested token, not owner', async function () {
+    const tokens = 1000;
+    const now = new Date().getTime() / 1000;
+    const cliff = 60 * 1000;
+    const duration = 300 * 1000;
+
+    return token.createVestedToken(buyer, now, cliff, duration, tokens, {
+        from: buyer
+      }).then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });;
+  });
+
+
+  //Wait 1 second
   it('should wait a second', () => {
     return new Promise((resolve, reject) => {
       setTimeout(resolve, 1000);
