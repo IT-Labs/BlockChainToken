@@ -42,7 +42,7 @@ const tgeRetail = [ //TGE & Retail                                   34000000
 
   const formatDate = x => moment(1000 * x).format('MMMM Do YYYY, h:mm:ss a')
 
-  const assignTokens = (caerusToken, f, callback) => async.eachSeries(f, ({ address, tokens }, cb) => {
+  const markTransferTokens = (caerusToken, f, callback) => async.eachSeries(f, ({ address, tokens }, cb) => {
     console.log(`Assigning ${address} ${tokens} tokens.`);
     return caerusToken
       .markTransferTokens(address,
@@ -50,24 +50,34 @@ const tgeRetail = [ //TGE & Retail                                   34000000
       .then(() => { console.log('tx submitted'); cb() })
       .catch(e => { console.log(e); console.log('stopping operation'); callback() })     
     }, callback);
-  
+
+    const assignTokens = (caerusToken, f, callback) => async.eachSeries(f, ({ address, tokens }, cb) => {
+      console.log(`Assigning ${address} ${tokens} tokens.`);
+      return caerusToken
+        .transfer(address,
+          tokens, { gas: 3e5, from: ownerAddress })
+        .then(() => { console.log('tx submitted'); cb() })
+        .catch(e => { console.log(e); console.log('stopping operation'); callback() })     
+      }, callback);
+
+    const vestTokens = (caerusToken, f, callback) => async.eachSeries(f, ({ address, tokens }, cb) => {
+      console.log(`Assigning founders ${address} ${tokens} CAER. Cliff ${formatDate(cliff)} (${cliff}) Vesting ${formatDate(duration)} (${duration})`);
+      console.log(now);
+      return caerusToken
+        .createVestedToken(address,
+          now,
+          cliff,
+          duration,
+          tokens, { gas: 3000000 , from: ownerAddress })
+        .then(() => { console.log('tx submitted'); cb() })
+        .catch(e => { console.log(e); console.log('stopping founders operation'); callback() })     
+       }, callback);
+
 module.exports = function (callback) {
     
     const caerusToken = CaerusToken.at(tokenAddress);
-
-    async.eachSeries(founders, ({ address, tokens }, cb) => {
-    console.log(`Assigning founders ${address} ${tokens} CAER. Cliff ${formatDate(cliff)} (${cliff}) Vesting ${formatDate(duration)} (${duration})`);
-    console.log(now);
-    return caerusToken
-      .createVestedToken(address,
-        now,
-        cliff,
-        duration,
-        tokens, { gas: 3000000 , from: ownerAddress })
-      .then(() => { console.log('tx submitted'); cb() })
-      .catch(e => { console.log(e); console.log('stopping founders operation'); callback() })     
-     }, callback);
-
+    console.log(`Assigning founders vested tokens`);
+    vestTokens(caerusToken, tgeRetail, callback);
     console.log(`Assigning tgeRetail`);
     assignTokens(caerusToken, tgeRetail, callback);
     console.log(`Assigning launchPartners`);
@@ -77,5 +87,5 @@ module.exports = function (callback) {
     console.log(`Assigning foundation`);
     assignTokens(caerusToken, foundation, callback);
     console.log(`Assigning preSaleSoldTokens`);
-    assignTokens(caerusToken, preSaleSoldTokens, callback);
+    markTransferTokens(caerusToken, preSaleSoldTokens, callback);
 }
