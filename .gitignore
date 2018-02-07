@@ -1,11 +1,4 @@
 
-src/build
-src/node_modules
-
-bin/
-/.vscode
-
-src/package-lock\.json
 
 !src/node_modules/zeppelin-solidity/contracts/token/ERC20/PausableToken.sol
 !src/node_modules/zeppelin-solidity/contracts/token/ERC20/TokenVesting.sol
@@ -19,3 +12,11 @@ src/package-lock\.json
 !src/node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol
 !src/node_modules/zeppelin-solidity/contracts/math/SafeMath.sol
 !src/node_modules/zeppelin-solidity/contracts/lifecycle/Pausable.sol
+
+src/build
+src/node_modules
+
+bin/
+/.vscode
+
+src/package-lock\.json

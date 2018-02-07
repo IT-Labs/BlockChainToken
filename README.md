@@ -2,7 +2,7 @@
 
 ## Technical definition
 
-At the technical level CAerus token is a ERC20-compliant token, derived from the [Open zeppelin](https://github.com/OpenZeppelin/).
+At the technical level Caerus token is a ERC20-compliant token, derived from the [Open zeppelin](https://github.com/OpenZeppelin/).
 
 Also built in the token is a vesting schedule for limiting Caerus transferability over time. CAerus Connection Project founders have vesting in their tokens.
 
