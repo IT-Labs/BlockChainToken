@@ -2,36 +2,36 @@ var CaerusToken = artifacts.require("CaerusToken");
 var moment = require('moment');
 var async = require('async');
 
-const tokenAddress = '0x7e599c8a547641983db9bb93e24dd650738c8ad3'
-const ownerAddress = '0x5bf679526bc2589e4ec869c8ea0db415bba8e804'
+const tokenAddress = '0xb4f1b158b16af4f318e3ff89a1809736262e3ae0'
+const ownerAddress = '0x95e0c7d4b80984fe082cecabcba8eae7e30068b7'
 
 const founders = [ //Founders                                        19970000
-    { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens: 10000000 }, 
-    { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens:  8000000 },
-    { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens:  1970000 },
+    { address: '0x92467c60cc4f6371e9083af81e494699e2844a5e', tokens: 10000000 }, //9
+    { address: '0xa1f24183acd654a2276202338777ee89cc443607', tokens:  8000000 },
+    { address: '0x480e9a5a427ca4490064ce5e420e5eb032ef0ae3', tokens:  1970000 }, //3
   ];
 
 const tgeRetail = [ //TGE & Retail                                   34000000
-    { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens:  4000000 },
-    { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens: 30000000 },
+    { address: '0x775f309ab7d4ff2eda1f3115a5bf99e52967c97f', tokens:  4000000 },
+    { address: '0x775f309ab7d4ff2eda1f3115a5bf99e52967c97f', tokens: 30000000 }, //4
   ];
 
   const launchPartners = [ // Launch Partners                         4245000
-    { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens:  4245000 }, 
+    { address: '0xb6dc1ba30a938d34a95dfcbd0f421323b9d8b069', tokens:  4245000 }, //5
   ];
 
   const incentives = [ // Incentives                                  1485000
-    { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens:  1485000 }, 
+    { address: '0x3eec8c8c7169b82a203f89eefbd80c8b1fcf2bf2', tokens:  1485000 }, //6
   ];
 
   const foundation = [ // Foundation                                  300000
-    { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens:   300000 },
+    { address: '0xea4505cc1ac4d460c0ecc293da64ebd3538b9a9b', tokens:   300000 }, //7
   ];
 
   const preSaleSoldTokens = [
-    { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens: 1000000 },
-    { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens: 2000000 },
-    { address: '0xe47e5ccc71adddd27b98fa3ebfa0168537951b41', tokens: 3000000 },
+    { address: '0x6386e5aa21fbe43d3865d6ee2734adb670f8122d', tokens: 1000000 }, //2
+    { address: '0x6386e5aa21fbe43d3865d6ee2734adb670f8122d', tokens: 2000000 },
+    { address: '0xf80523f7f2c70b065054ebbde57d6e4ee77a9f50', tokens: 3000000 }, //8
   ];
 
   const now = +new Date() / 1000
@@ -41,48 +41,41 @@ const tgeRetail = [ //TGE & Retail                                   34000000
   const duration = now + 12 * month
 
   const formatDate = x => moment(1000 * x).format('MMMM Do YYYY, h:mm:ss a')
+
+  const assignTokens = (caerusToken, f, callback) => async.eachSeries(f, ({ address, tokens }, cb) => {
+    console.log(`Assigning ${address} ${tokens} tokens.`);
+    return caerusToken
+      .markTransferTokens(address,
+        tokens, { gas: 3e5, from: ownerAddress })
+      .then(() => { console.log('tx submitted'); cb() })
+      .catch(e => { console.log(e); console.log('stopping operation'); callback() })     
+    }, callback);
   
 module.exports = function (callback) {
     
     const caerusToken = CaerusToken.at(tokenAddress);
-    caerusToken.balanceOf(ownerAddress).then((a)=> console.log(`Owner balance: ${a}`));
 
     async.eachSeries(founders, ({ address, tokens }, cb) => {
-    console.log(`Assigning ${address} (${tokens} CAER). Cliff ${formatDate(cliff)} (${cliff}) Vesting ${formatDate(duration)} (${duration})`);
+    console.log(`Assigning founders ${address} ${tokens} CAER. Cliff ${formatDate(cliff)} (${cliff}) Vesting ${formatDate(duration)} (${duration})`);
+    console.log(now);
     return caerusToken
       .createVestedToken(address,
         now,
         cliff,
         duration,
-        tokens, { gas: 3e5, from: ownerAddress })
-      .then(() => { console.log('tx submitted yay'); cb() })
-      .catch(e => { console.log(e); console.log('stopping founders operation'); callback() })
-     
-    }, callback);
+        tokens, { gas: 3000000 , from: ownerAddress })
+      .then(() => { console.log('tx submitted'); cb() })
+      .catch(e => { console.log(e); console.log('stopping founders operation'); callback() })     
+     }, callback);
 
-    caerusToken.balanceOf(ownerAddress).then((a)=> console.log(`Owner balance: ${a}`));
-
-    async.eachSeries(tgeRetail, ({ address, tokens }, cb) => {
-      console.log(`Assigning tgeRetail ${address} ${tokens} tokens.`);
-      return caerusToken
-        .markTransferTokens(address,
-          tokens, { gas: 3e5, from: ownerAddress })
-        .then(() => { console.log('tx submitted yay'); cb() })
-        .catch(e => { console.log(e); console.log('stopping tgeRetail operation'); callback() })
-       
-      }, callback);
-
-    caerusToken.balanceOf(ownerAddress).then((a)=> console.log(`Owner balance: ${a}`));
-
-    async.eachSeries(launchPartners, ({ address, tokens }, cb) => {
-      console.log(`Assigning launchPartner ${address} ${tokens} tokens.`);
-      return caerusToken
-        .markTransferTokens(address,
-          tokens, { gas: 3e5, from: ownerAddress })
-        .then(() => { console.log('tx submitted yay'); cb() })
-        .catch(e => { console.log(e); console.log('stopping launchPartners operation'); callback() })
-       
-      }, callback);
-    
-
-  }
+    console.log(`Assigning tgeRetail`);
+    assignTokens(caerusToken, tgeRetail, callback);
+    console.log(`Assigning launchPartners`);
+    assignTokens(caerusToken, launchPartners, callback);
+    console.log(`Assigning incentives`);
+    assignTokens(caerusToken, incentives, callback);
+    console.log(`Assigning foundation`);
+    assignTokens(caerusToken, foundation, callback);
+    console.log(`Assigning preSaleSoldTokens`);
+    assignTokens(caerusToken, preSaleSoldTokens, callback);
+}
