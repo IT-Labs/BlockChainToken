@@ -113,10 +113,10 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
     }
 
     /**
-    * @dev Transfer tokens from one address to another
-    * @param _from address The address which you want to send tokens from
-    * @param _to address The address which you want to transfer to
-    * @param _tokens uint256 the amount of tokens to be transferred
+    * @dev Transfer tokens from one address to another.
+    * @param _from address The address which you want to send tokens from.
+    * @param _to address The address which you want to transfer to.
+    * @param _tokens uint256 the amount of tokens to be transferred.
     */
     function transferTokens(address _from, address _to, uint256 _tokens) private {
         require(_tokens > 0);
@@ -137,7 +137,8 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
     }
 
     /**
-    * @dev Increase token sold amount
+    * @dev Increase token sold amount.
+    * @param _tokens Amount of tokens that are sold.
     */
     function markTokenSold(uint256 _tokens) private {
         tokenSold = tokenSold.add(_tokens);
