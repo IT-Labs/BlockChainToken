@@ -5,7 +5,7 @@ import '../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol';
 
 /**
   * @title  RateToken
-   * @dev Rate Token Contract implementation 
+  * @dev Rate Token Contract implementation 
 */
 contract RateToken is Ownable {
     using SafeMath for uint256;
@@ -21,33 +21,30 @@ contract RateToken is Ownable {
     */
     event RateSet(uint256 rate);
 
-   /**
-   * @dev The RateToken constructor sets the initial rate 
-   * @param _initilRate The amount of rate to be set
-   */
+   
     function RateToken(uint256 _initilRate) public {
         setRate(_initilRate);
     }
 
    /**
-   * @title set Rate
+   * @title Set Rate
    * @dev Function that sets the rate
-   * @params _rateInWei rate value to be set
-   */
+   * @params _rateInWei The amount of rate to be set
+    */
     function setRate(uint _rateInWei) onlyOwner public {
         require(_rateInWei > 0);
         rate = _rateInWei;
         RateSet(rate);
     }
 
-    /**
-   * @title add discount
-   * @dev Function for adding discount percent for 
-   * @param _buyer The address of the buyer
-   * @param _minTokens The amount of tokens 
-   * @param _percent The amount of discount in percents
+   /**
+   * @title add discount.
+   * @dev Function for adding discount for concrete buyer.  
+   * @param _buyer The address of the buyer.
+   * @param _minTokens The amount of tokens.
+   * @param _percent The amount of discount in percents.
    * @return A boolean that indicates if the operation was successful.
-   */
+    */
     function addDiscount(address _buyer, uint256 _minTokens, uint256 _percent) public onlyOwner returns (bool) {
         require(_buyer != address(0));
         require(_minTokens > 0);
@@ -61,9 +58,9 @@ contract RateToken is Ownable {
     }
 
    /**
-   * @title remove discount
-   * @dev Function to remove discount
-   * @param _buyer The address to remove the discount from
+   * @title remove discount.
+   * @dev Function to remove discount.
+   * @param _buyer The address to remove the discount from.
    * @return A boolean that indicates if the operation was successful.
    */
     function removeDiscount(address _buyer) public onlyOwner { 
@@ -72,11 +69,11 @@ contract RateToken is Ownable {
     }
 
     /**
-    * @title Function to calculate 
-    * @dev Calculate wei ammout 
-    * @param _buyer address 
-    * @param _tokens The amount of tokens
-    * @return uint256 the amount of tokens 
+    * @title Calculate Wei Needed.
+    * @dev Public Function that calculates how much 
+    * @param _buyer address.
+    * @param _tokens The amount of tokens.
+    * @return uint256 the amount of calculated tokens.
     */
     function calculateWeiNeeded(address _buyer, uint _tokens) public view returns (uint256) {
         require(_buyer != address(0));
@@ -94,20 +91,20 @@ contract RateToken is Ownable {
     }
     
     /**
-    * @title Remove Existing Discount
-    * @param _buyer the address which will be removed from discounts mapping
-    * @dev Removes discount for concrete address.
-    */
+    *  @title Remove Existing Discount
+     * @dev Removes discount for concrete buyer.
+     * @param _buyer the address for which the discount will be removed.
+     */
     function removeExistingDiscount(address _buyer) internal {
         delete(discounts[_buyer]);
     }
 
-      /**
+    /**
     * @title calculate tokens
-    * @param _buyer address 
-    * @param _buyerAmountInWei ammoount 
-    * @dev calculate price with discount
-    * @return uint256 value of the calculated tokens
+    * @dev Function that calculated how much tokens a buyer can buy.
+    * @param _buyer address for which the discount will be calculated.
+    * @param _buyerAmountInWei amount of ether in wei (the samllest ether unit). 
+    * @return uint256 value of the calculated tokens.
     */
     function calculateTokens(address _buyer, uint256 _buyerAmountInWei) internal view returns (uint256) {
         Discount storage discount = discounts[_buyer];
