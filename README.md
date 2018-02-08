@@ -10,8 +10,8 @@ Also built in the token is a vesting schedule for limiting Caerus transferabilit
 
 Token:
 
-- [RateToken.sol](/contracts/RateToken.sol): Main contract for the token. Derives MiniMeIrrevocableVestedToken.
-- [CaerusToken.sol](/contracts/CaerusToken.sol): Adds vesting to MiniMeToken. Derives MiniMeToken.
+- [RateToken.sol](/contracts/RateToken.sol): Contract that holds rate related methods. 
+- [CaerusToken.sol](/contracts/CaerusToken.sol): Main contract for the token.  
 
 ## Reviewers and audits
 
