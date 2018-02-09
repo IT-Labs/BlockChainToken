@@ -457,6 +457,51 @@ contract('CaerusToken', accounts => {
       });;
   });
 
+  //transferAnyCaerusToken
+  it('transfer any caerus token', async function () {
+    const tokens = 1000;
+
+    //Pre state
+    const buyerTokens = await token.balanceOf(buyer);
+    const ownerTokens = await token.balanceOf(owner);
+
+    assert(await token.markTransferTokens(buyer, tokens, {
+      from: owner
+    }));
+
+    //Post Transfer State
+    const buyerTokensPost = await token.balanceOf(buyer);
+    const ownerTokensPost = await token.balanceOf(owner);
+
+    assert(buyerTokensPost.eq(buyerTokens + tokens));
+    assert(ownerTokensPost.eq(ownerTokens - tokens));
+
+    assert(await token.transferAnyCaerusToken(buyer, tokens, {
+        from: owner
+      }));
+
+    //Post Return State
+    const buyerTokensPostReturn = await token.balanceOf(buyer);
+    const ownerTokensPostReturn = await token.balanceOf(owner);
+
+    assert(buyerTokens.eq(buyerTokensPostReturn));
+    assert(ownerTokens.eq(ownerTokensPostReturn));
+  });
+
+  it('transfer any caerus token, not owner', async function () {
+    const tokens = 1000;
+
+    return token.transferAnyCaerusToken(buyer, tokens, {
+        from: buyer
+      }).then(assert.fail)
+      .catch(function (error) {
+        assert.equal(
+          error.message,
+          'VM Exception while processing transaction: revert'
+        )
+      });
+  });
+
 
   //Wait 1 second
   it('should wait a second', () => {
