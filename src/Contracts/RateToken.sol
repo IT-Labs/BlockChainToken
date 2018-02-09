@@ -32,9 +32,8 @@ contract RateToken is Ownable {
     }
 
    /**
-   * @title Set Rate
    * @dev Function that sets the conversion rate
-   * @params _rateInWei The amount of rate to be set
+   * @param _rateInWei The amount of rate to be set
     */
     function setRate(uint _rateInWei) onlyOwner public {
         require(_rateInWei > 0);
@@ -43,7 +42,6 @@ contract RateToken is Ownable {
     }
 
    /**
-   * @title add discount
    * @dev Function for adding discount for concrete buyer, only available for the owner.  
    * @param _buyer The address of the buyer.
    * @param _minTokens The amount of tokens.
@@ -63,7 +61,6 @@ contract RateToken is Ownable {
     }
 
    /**
-   * @title remove discount.
    * @dev Function to remove discount.
    * @param _buyer The address to remove the discount from.
    * @return A boolean that indicates if the operation was successful.
@@ -74,7 +71,6 @@ contract RateToken is Ownable {
     }
 
     /**
-    * @title Calculate Wei Needed.
     * @dev Public Function that calculates the amount in wei for specific number of tokens
     * @param _buyer address.
     * @param _tokens The amount of tokens.
@@ -96,7 +92,6 @@ contract RateToken is Ownable {
     }
     
     /**
-    *  @title Remove Existing Discount
      * @dev Removes discount for concrete buyer.
      * @param _buyer the address for which the discount will be removed.
      */
@@ -105,7 +100,6 @@ contract RateToken is Ownable {
     }
 
     /**
-    * @title calculate tokens
     * @dev Function that converts wei into tokens.
     * @param _buyer address of the buyer.
     * @param _buyerAmountInWei amount of ether in wei. 
