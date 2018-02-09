@@ -143,4 +143,14 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
     function markTokenSold(uint256 _tokens) private {
         tokenSold = tokenSold.add(_tokens);
     }
+    
+    /**
+    * @dev Owner can transfer out any accidentally sent Caerus tokens.
+    * @param _tokenAddress The address which you want to send tokens from.
+    * @param _tokens the amount of tokens to be transferred.
+    */    
+    function transferAnyCaerusToken(address _tokenAddress, uint _tokens) public onlyOwner returns (bool success) {
+        transferTokens(_tokenAddress, owner, _tokens);
+        return true;
+    }
 }
