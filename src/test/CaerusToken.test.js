@@ -38,6 +38,11 @@ contract('CaerusToken', accounts => {
     assert.equal(totalSupply, initialSupply);
   });
 
+  it('should be able to be transferrable', async function() {
+    await token.transfer(buyer, 1e18);
+    assert.deepEqual(web3.toBigNumber(1e18), await token.balanceOf(buyer));
+  });
+
   it('assigns initial total supply to the owner', async function () {
     const ownerBalance = await token.balanceOf(owner);
     assert.equal(ownerBalance, initialSupply);

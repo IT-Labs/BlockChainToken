@@ -9,6 +9,7 @@ import '../node_modules/zeppelin-solidity/contracts/token/ERC20/DetailedERC20.so
  * @title Caerus token.
  * @dev Implementation of the Caerus token.
  */
+ // Tokens are transferrable while contract is paused
 contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
     mapping (address => uint256) public contributions;
     uint256 public tokenSold = 0; 
@@ -23,32 +24,32 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
     event TokensSpent(address indexed tokensHolder, uint256 tokens);
 
     function CaerusToken(address _transferAddress, uint _initialRate) public RateToken(_initialRate) DetailedERC20("Caerus Token", "CAER", 18) {
-        totalSupply_ = 73000000;
-        transferAddress = _transferAddress;
-        balances[owner] = totalSupply_;
+        totalSupply_ = 73000000; // ERR: this is less than one token
+        transferAddress = _transferAddress; // OK
+        balances[owner] = totalSupply_; // OK
   	}
 
     /**
     * @dev Fallback function when receiving Ether.
     */
-    function() payable public {
-        buyTokens();
+    function() payable public { // OK
+        buyTokens(); // OK
     }
 
     /**
     * @dev Allow addresses to buy tokens.
     */
     function buyTokens() payable public whenNotPaused {
-        require(msg.value > 0);
+        require(msg.value > 0); // OK 
         
         uint256 tokens = calculateTokens(msg.sender, msg.value);
-        transferTokens(owner, msg.sender, tokens);
+        transferTokens(owner, msg.sender, tokens); // OK 
 
-        markTokenSold(tokens);
-        markContribution();
-        removeExistingDiscount(msg.sender);
-        transferAddress.transfer(msg.value);
-        TokensBought(msg.sender, tokens);
+        markTokenSold(tokens); // OK 
+        markContribution(); // OK 
+        removeExistingDiscount(msg.sender); // OK 
+        transferAddress.transfer(msg.value); // OK 
+        TokensBought(msg.sender, tokens); // OK 
     }
 
     /**
@@ -57,11 +58,12 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
     * @param _tokens Amount of tokens that need to be transfered.
     * @return Boolean representing the successful execution of the function.
     */
+    // Owner could use regular transfer method if they wanted to
     function markTransferTokens(address _to, uint256 _tokens) onlyOwner public returns (bool) {
-        require(_to != address(0));
+        require(_to != address(0)); // OK 
 
-        transferTokens(owner, _to, _tokens);
-        markTokenSold(_tokens);
+        transferTokens(owner, _to, _tokens); // OK 
+        markTokenSold(_tokens); // OK 
         return true;
     }
 
@@ -77,23 +79,27 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
    * @return Boolean representing the successful execution of the function.
    */
     function createVestedToken(address _beneficiary, uint256 _start, uint256 _cliff, uint256 _duration, uint256 _tokens) onlyOwner public returns (bool) {
-        var vestedToken = new TokenVesting(_beneficiary, _start, _cliff, _duration, false);
-        vestedTokens[_beneficiary] = vestedToken;
-        address vestedAddress = address(vestedToken);
-        transferTokens(owner, vestedAddress, _tokens); 
-        VestedTokenCreated(_beneficiary, _duration, _tokens);
+        var vestedToken = new TokenVesting(_beneficiary, _start, _cliff, _duration, false);  // OK
+        vestedTokens[_beneficiary] = vestedToken; // OK
+        address vestedAddress = address(vestedToken); // OK
+        transferTokens(owner, vestedAddress, _tokens);  // OK
+        VestedTokenCreated(_beneficiary, _duration, _tokens); // OK
         return true;
     }
+
+
+    // There is no method to revoke vetsing
+
 
     /**
     * @dev Transfer tokens from address to owner address.
     * @param _tokens Amount of tokens that need to be transfered.
     * @return Boolean representing the successful execution of the function.
     */
-    function spendToken(uint256 _tokens) public returns (bool) {
-        transferTokens(msg.sender, owner, _tokens);
-        TokensSpent(msg.sender, _tokens);
-        return true;
+    function spendToken(uint256 _tokens) public returns (bool) { // OK
+        transferTokens(msg.sender, owner, _tokens); // OK
+        TokensSpent(msg.sender, _tokens); // OK
+        return true; // OK
     }
 
     /**
@@ -102,14 +108,14 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
     * @param _value The amount of tokens to be spent.
     * @return Boolean representing the successful execution of the function.
     */
-    function approve(address _spender, uint _value) public returns (bool) {
+    function approve(address _spender, uint _value) public returns (bool) { // OK
         //  To change the approve amount you first have to reduce the addresses`
         //  allowance to zero by calling `approve(_spender, 0)` if it is not
         //  already 0 to mitigate the race condition described here:
         //  https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-        require(_value == 0 || allowed[msg.sender][_spender] == 0);
+        require(_value == 0 || allowed[msg.sender][_spender] == 0); // OK
 
-        return super.approve(_spender, _value);
+        return super.approve(_spender, _value); // OK
     }
 
     /**
@@ -118,30 +124,30 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
     * @param _to The address which you want to transfer to.
     * @param _tokens the amount of tokens to be transferred.
     */
-    function transferTokens(address _from, address _to, uint256 _tokens) private {
-        require(_tokens > 0);
-        require(balances[_from] >= _tokens);
+    function transferTokens(address _from, address _to, uint256 _tokens) private { // OK
+        require(_tokens > 0); // OK
+        require(balances[_from] >= _tokens); // OK
         
-        balances[_from] = balances[_from].sub(_tokens);
-        balances[_to] = balances[_to].add(_tokens);        
-        Transfer(_from, _to, _tokens);
+        balances[_from] = balances[_from].sub(_tokens); // OK
+        balances[_to] = balances[_to].add(_tokens);     // OK    
+        Transfer(_from, _to, _tokens); // OK
     }
 
     /**
     * @dev Adds or updates contributions
     */
     function markContribution() private {
-        contributions[msg.sender] = contributions[msg.sender].add(msg.value);
-        weiRaised = weiRaised.add(msg.value);
-        Contribution(msg.sender, msg.value);
+        contributions[msg.sender] = contributions[msg.sender].add(msg.value); // OK 
+        weiRaised = weiRaised.add(msg.value); // OK 
+        Contribution(msg.sender, msg.value); // OK 
     }
 
     /**
     * @dev Increase token sold amount.
     * @param _tokens Amount of tokens that are sold.
     */
-    function markTokenSold(uint256 _tokens) private {
-        tokenSold = tokenSold.add(_tokens);
+    function markTokenSold(uint256 _tokens) private {  // Does this need its own function?
+        tokenSold = tokenSold.add(_tokens);  // OK 
     }
     
     /**
@@ -150,7 +156,7 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
     * @param _tokens the amount of tokens to be transferred.
     */    
     function transferAnyCaerusToken(address _tokenAddress, uint _tokens) public onlyOwner returns (bool success) {
-        transferTokens(_tokenAddress, owner, _tokens);
+        transferTokens(_tokenAddress, owner, _tokens); // OK 
         return true;
     }
 }
