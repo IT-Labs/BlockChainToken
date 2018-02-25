@@ -77,7 +77,7 @@ module.exports = function (callback) {
     
     const caerusToken = CaerusToken.at(tokenAddress);
     console.log(`Assigning founders vested tokens`);
-    vestTokens(caerusToken, tgeRetail, callback);
+    vestTokens(caerusToken, founders, callback);
     console.log(`Assigning tgeRetail`);
     assignTokens(caerusToken, tgeRetail, callback);
     console.log(`Assigning launchPartners`);

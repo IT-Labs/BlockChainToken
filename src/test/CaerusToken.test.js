@@ -6,7 +6,7 @@ contract('CaerusToken', accounts => {
   const buyer = accounts[1];
   const transferAddress = accounts[2];
   const vestedBeneficiary = accounts[3];
-  const initialSupply = 73000000;
+  const initialSupply = 73000000e18;
   const tokenRate = 0.0024;
   const tokenRateWei = web3.toWei(tokenRate, 'ether');
 

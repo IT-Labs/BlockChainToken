@@ -1,7 +1,7 @@
 var CaerusToken = artifacts.require("./CaerusToken.sol");
 
 module.exports = function(deployer, network, accounts) {
-    const multisigAddress = accounts[9];
+    const multisigAddress = "0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7";
     const ownerAddress = accounts[0];
     const initialRate = 2400000000000000;
     deployer.deploy(CaerusToken, multisigAddress, initialRate)

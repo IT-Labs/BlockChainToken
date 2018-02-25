@@ -24,7 +24,7 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
     event TokensSpent(address indexed tokensHolder, uint256 tokens);
 
     function CaerusToken(address _transferAddress, uint _initialRate) public RateToken(_initialRate) DetailedERC20("Caerus Token", "CAER", 18) {
-        totalSupply_ = 73000000; // ERR: this is less than one token
+        totalSupply_ = 73000000 * 10 ** 18; // ERR: this is less than one token
         transferAddress = _transferAddress; // OK
         balances[owner] = totalSupply_; // OK
   	}
@@ -80,7 +80,7 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
    */
     function createVestedToken(address _beneficiary, uint256 _start, uint256 _cliff, uint256 _duration, uint256 _tokens) onlyOwner public returns (bool) {
         var vestedToken = new TokenVesting(_beneficiary, _start, _cliff, _duration, false);  // OK
-        vestedTokens[_beneficiary] = vestedToken; // OK
+        vestedTokens[_beneficiary] = vestedToken; // ERR: If create a vesting token twice for one beneficiary it will override
         address vestedAddress = address(vestedToken); // OK
         transferTokens(owner, vestedAddress, _tokens);  // OK
         VestedTokenCreated(_beneficiary, _duration, _tokens); // OK
