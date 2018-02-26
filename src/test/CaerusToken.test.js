@@ -7,7 +7,9 @@ contract('CaerusToken', accounts => {
   const transferAddress = accounts[2];
   const vestedBeneficiary = accounts[3];
   const initialSupply = 73000000e18;
-  const tokenRate = 0.0024;
+  //How many tokens should be received per wei sent in
+  //The math works out to be the same as the previous rate with the new 18 decimal place functionality written into the contract
+  const tokenRate = 416;
   const tokenRateWei = web3.toWei(tokenRate, 'ether');
 
   beforeEach(async function () {
@@ -39,8 +41,8 @@ contract('CaerusToken', accounts => {
   });
 
   it('should be able to be transferrable', async function() {
-    await token.transfer(buyer, 1e18);
-    assert.deepEqual(web3.toBigNumber(1e18), await token.balanceOf(buyer));
+    await token.transfer(buyer, 1e8);
+    assert.deepEqual(web3.toBigNumber(1e8), await token.balanceOf(buyer));
   });
 
   it('assigns initial total supply to the owner', async function () {

@@ -22,13 +22,13 @@ contract RateToken is Ownable {
     uint256 public rate; // OK
 
    /**
-    * @dev Event which is fiered when Rate is set
+    * @dev Event which is fired when Rate is set
     */
     event RateSet(uint256 rate); // OK
 
    
-    function RateToken(uint256 _initilRate) public { // OK
-        setRate(_initilRate); // OK
+    function RateToken(uint256 _initialRate) public { // OK
+        setRate(_initialRate); // OK
     }
 
    /**
@@ -84,13 +84,18 @@ contract RateToken is Ownable {
 
         Discount storage discount = discounts[_buyer]; // OK
         if (discount.minTokens == 0) { // OK
-            return _tokens.mul(rate); // OK
+            return _tokens.div(rate); // OK
         }
         require(_tokens >= discount.minTokens); // OK
 
-        uint256 discountRate = rate.mul(discount.percent).div(100); // OK
-        uint256 newRate = rate.sub(discountRate); // OK
-        return _tokens.mul(newRate); // OK
+        uint256 discountBonus = rate.mul(discount.percent).div(100);
+        uint256 tokensPerWeiWithDiscount = discountBonus + rate;
+        uint256 newTotalWeiNeeded = _tokens.div(tokensPerWeiWithDiscount);
+        return newTotalWeiNeeded;
+
+//        uint256 discountRate = rate.mul(discount.percent).div(100); // OK - discountRate could probably be named better, it makes it sound like a multiple right now.
+//        uint256 newRate = rate.sub(discountRate); // OK
+//        return _tokens.mul(newRate); // OK
     }
     
     /**
@@ -110,13 +115,19 @@ contract RateToken is Ownable {
     function calculateTokens(address _buyer, uint256 _buyerAmountInWei) internal view returns (uint256) {
         Discount storage discount = discounts[_buyer];
         if (discount.minTokens == 0) {
-            return _buyerAmountInWei.div(rate);
+            return _buyerAmountInWei.mul(rate);
         }
 
-        uint256 discountRate = rate.mul(discount.percent).div(100);
-        uint256 newRate = rate.sub(discountRate);
-        uint256 tokens = _buyerAmountInWei.div(newRate);
+        uint256 discountBonus = rate.mul(discount.percent).div(100);
+        uint256 tokensPerWeiWithDiscount = discountBonus + rate;
+        uint256 tokens = _buyerAmountInWei.mul(tokensPerWeiWithDiscount);
         require(tokens >= discount.minTokens);
         return tokens;
+//
+//        uint256 discountRate = rate.mul(discount.percent).div(100);
+//        uint256 newRate = rate.sub(discountRate);
+//        uint256 tokens = _buyerAmountInWei.div(newRate);
+//        require(tokens >= discount.minTokens);
+//        return tokens;
     }  
 }

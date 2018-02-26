@@ -5,7 +5,7 @@ var async = require('async');
 
 module.exports = async function (callback) {
   const caerusToken = await CaerusToken.deployed();
-  const investorAddresses = web3.eth.accounts.splice(0, 75);
+  const investorAddresses = web3.eth.accounts.splice(12, 75);
 
   async.eachSeries(investorAddresses, async (address, cb) => {
     await caerusToken.sendTransaction({from: address, value: web3.toWei(10, "ether")})
