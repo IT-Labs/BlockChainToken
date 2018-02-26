@@ -118,16 +118,10 @@ contract RateToken is Ownable {
             return _buyerAmountInWei.mul(rate);
         }
 
-        uint256 discountBonus = rate.mul(discount.percent).div(100);
-        uint256 tokensPerWeiWithDiscount = discountBonus + rate;
-        uint256 tokens = _buyerAmountInWei.mul(tokensPerWeiWithDiscount);
+        uint256 normalTokens = _buyerAmountInWei.mul(rate);
+        uint256 discountBonus = normalTokens.mul(discount.percent).div(100);
+        uint256 tokens = normalTokens + discountBonus;
         require(tokens >= discount.minTokens);
         return tokens;
-//
-//        uint256 discountRate = rate.mul(discount.percent).div(100);
-//        uint256 newRate = rate.sub(discountRate);
-//        uint256 tokens = _buyerAmountInWei.div(newRate);
-//        require(tokens >= discount.minTokens);
-//        return tokens;
     }  
 }
