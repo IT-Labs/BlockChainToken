@@ -1,8 +1,9 @@
 __________________________Initial State__________________________
 Using network 'development'.
 
-Total Supply: 73000000.000000000000000000
-MultiSig Balance: 0.000000000000000000
+Total Supply: 73000000
+MultiSig Balance: 0 Ether
+
 0x44399e92107464187c61b3708413196a76fce74e  balance: 73000000.000000000000000000
 0x0c39284e070427750afc519b9e0fbbd5f5a3b862  balance: 0.000000000000000000
 0x3f96030c0422314ad3ca8760c6065e6e087953d4  balance: 0.000000000000000000
@@ -81,8 +82,6 @@ MultiSig Balance: 0.000000000000000000
 __________________________Presale__________________________
 Using network 'development'.
 
-Assigning founders vested tokens
-Assigning founders 0x0c39284e070427750afc519b9e0fbbd5f5a3b862 1e+25 CAER. Cliff August 24th 2018, 9:33:43 pm (1535164423.769) Vesting February 20th 2019, 8:33:43 pm (1550716423.769)
 Assigning tgeRetail
 Assigning 0xf2b269679d131e81909d1fa23fee200099e3d6dc 4e+24 tokens.
 Assigning launchPartners
@@ -93,8 +92,8 @@ Assigning foundation
 Assigning 0x72067be19865d15a48227e0fdae7cfdc818c67ff 3e+23 tokens.
 Assigning preSaleSoldTokens
 Assigning 0x6f3b751453fa616fe9dfd93919ef187232dc22a7 1e+24 tokens.
-tx submitted
-Assigning founders 0x3f96030c0422314ad3ca8760c6065e6e087953d4 8e+24 CAER. Cliff August 24th 2018, 9:33:43 pm (1535164423.769) Vesting February 20th 2019, 8:33:43 pm (1550716423.769)
+Assigning founders vested tokens
+Assigning founders 0x0c39284e070427750afc519b9e0fbbd5f5a3b862 1e+25 CAER. Cliff December 31st 1969, 6:00:05 pm (5) Vesting December 31st 1969, 6:00:30 pm (30)
 tx submitted
 Assigning 0x503d36894cf50fd17e53b1f9df932c30d6b1280c 3e+25 tokens.
 tx submitted
@@ -103,30 +102,24 @@ tx submitted
 tx submitted
 Assigning 0x00950a2fe373a16db70937cb7e05322a2dfae23a 2e+24 tokens.
 tx submitted
-Assigning founders 0xaa507884adffb8dfa47588090ce167f12e7e1651 1.97e+24 CAER. Cliff August 24th 2018, 9:33:43 pm (1535164423.769) Vesting February 20th 2019, 8:33:43 pm (1550716423.769)
+Assigning founders 0x3f96030c0422314ad3ca8760c6065e6e087953d4 8e+24 CAER. Cliff December 31st 1969, 6:00:05 pm (5) Vesting December 31st 1969, 6:00:30 pm (30)
 tx submitted
 tx submitted
 Assigning 0x85dfd32ec0de31f85b18eece4c9b13e2cd200758 3e+24 tokens.
 tx submitted
+Assigning founders 0xaa507884adffb8dfa47588090ce167f12e7e1651 1.97e+24 CAER. Cliff December 31st 1969, 6:00:05 pm (5) Vesting December 31st 1969, 6:00:30 pm (30)
+tx submitted
 tx submitted
 Using network 'development'.
 
-Total Supply: 73000000.000000000000000000
-MultiSig Balance: 0.000000000000000000
+Total Supply: 73000000
+MultiSig Balance: 0 Ether
+
 0x44399e92107464187c61b3708413196a76fce74e  balance: 7000000.000000000000000000
 0x0c39284e070427750afc519b9e0fbbd5f5a3b862  balance: 0.000000000000000000
-vestedTokenAddress: 0x14579d2c15bd1939144ffbbbe1f919b3fe4f3e0a
 0x3f96030c0422314ad3ca8760c6065e6e087953d4  balance: 0.000000000000000000
-0x14579d2c15bd1939144ffbbbe1f919b3fe4f3e0a  balance: 1e+25
-vestedTokenAddress: 0x11acacfff4f4462d8b83ba791daf90585925f238
-0x14579d2c15bd1939144ffbbbe1f919b3fe4f3e0a is holding for : 0x0c39284e070427750afc519b9e0fbbd5f5a3b862
 0xaa507884adffb8dfa47588090ce167f12e7e1651  balance: 0.000000000000000000
-0x11acacfff4f4462d8b83ba791daf90585925f238  balance: 8e+24
-vestedTokenAddress: 0x6e05bb5d6bc9b1a709c14ed39eec58d204e1d570
-0x11acacfff4f4462d8b83ba791daf90585925f238 is holding for : 0x3f96030c0422314ad3ca8760c6065e6e087953d4
 0xf2b269679d131e81909d1fa23fee200099e3d6dc  balance: 4000000.000000000000000000
-0x6e05bb5d6bc9b1a709c14ed39eec58d204e1d570  balance: 1.97e+24
-0x6e05bb5d6bc9b1a709c14ed39eec58d204e1d570 is holding for : 0xaa507884adffb8dfa47588090ce167f12e7e1651
 0x503d36894cf50fd17e53b1f9df932c30d6b1280c  balance: 30000000.000000000000000000
 0x6cdedc08d8fa67d43dfff2632827f029790bcf0d  balance: 4245000.000000000000000000
 0x8f368e707e39f898e052ea09699356ae34ca3a95  balance: 1485000.000000000000000000
@@ -225,22 +218,14 @@ Using network 'development'.
 
 Using network 'development'.
 
-Total Supply: 73000000.000000000000000000
-MultiSig Balance: 750.000000000000000000
+Total Supply: 73000000
+MultiSig Balance: 750 Ether
+
 0x44399e92107464187c61b3708413196a76fce74e  balance: 6648272.000000000000000000
 0x0c39284e070427750afc519b9e0fbbd5f5a3b862  balance: 0.000000000000000000
-vestedTokenAddress: 0x14579d2c15bd1939144ffbbbe1f919b3fe4f3e0a
 0x3f96030c0422314ad3ca8760c6065e6e087953d4  balance: 0.000000000000000000
-0x14579d2c15bd1939144ffbbbe1f919b3fe4f3e0a  balance: 1e+25
-vestedTokenAddress: 0x11acacfff4f4462d8b83ba791daf90585925f238
-0x14579d2c15bd1939144ffbbbe1f919b3fe4f3e0a is holding for : 0x0c39284e070427750afc519b9e0fbbd5f5a3b862
 0xaa507884adffb8dfa47588090ce167f12e7e1651  balance: 0.000000000000000000
-0x11acacfff4f4462d8b83ba791daf90585925f238  balance: 8e+24
-vestedTokenAddress: 0x6e05bb5d6bc9b1a709c14ed39eec58d204e1d570
-0x11acacfff4f4462d8b83ba791daf90585925f238 is holding for : 0x3f96030c0422314ad3ca8760c6065e6e087953d4
 0xf2b269679d131e81909d1fa23fee200099e3d6dc  balance: 4000000.000000000000000000
-0x6e05bb5d6bc9b1a709c14ed39eec58d204e1d570  balance: 1.97e+24
-0x6e05bb5d6bc9b1a709c14ed39eec58d204e1d570 is holding for : 0xaa507884adffb8dfa47588090ce167f12e7e1651
 0x503d36894cf50fd17e53b1f9df932c30d6b1280c  balance: 30000000.000000000000000000
 0x6cdedc08d8fa67d43dfff2632827f029790bcf0d  balance: 4245000.000000000000000000
 0x8f368e707e39f898e052ea09699356ae34ca3a95  balance: 1485000.000000000000000000
@@ -311,3 +296,30 @@ vestedTokenAddress: 0x6e05bb5d6bc9b1a709c14ed39eec58d204e1d570
 0xacd4ede8424b6a76412317259bf1b4d0c5c85a04  balance: 4160.000000000000000000
 0x3433e76ea0407aec2dc128a63dd4d5cc2c9ee69c  balance: 4160.000000000000000000
 0x9f0297fd5d7efff0f6a5b267eda126bb43a318c5  balance: 4160.000000000000000000
+__________________________ Vesting _________________________________
+Using network 'development'.
+
+beneficiary: 0x0c39284e070427750afc519b9e0fbbd5f5a3b862, 
+            balance: 10000000, 
+            vested tokens: 4000000,
+            cliff: Mon Feb 26 2018 14:41:41 GMT-0600 (CST),
+            start: Mon Feb 26 2018 14:41:36 GMT-0600 (CST),
+            duration: 30,
+            now: Mon Feb 26 2018 14:41:52 GMT-0600 (CST)
+            
+beneficiary: 0x3f96030c0422314ad3ca8760c6065e6e087953d4, 
+            balance: 8000000, 
+            vested tokens: 2933333.333333333333333333,
+            cliff: Mon Feb 26 2018 14:41:42 GMT-0600 (CST),
+            start: Mon Feb 26 2018 14:41:37 GMT-0600 (CST),
+            duration: 30,
+            now: Mon Feb 26 2018 14:41:52 GMT-0600 (CST)
+            
+beneficiary: 0xaa507884adffb8dfa47588090ce167f12e7e1651, 
+            balance: 1970000, 
+            vested tokens: 722333.333333333333333333,
+            cliff: Mon Feb 26 2018 14:41:42 GMT-0600 (CST),
+            start: Mon Feb 26 2018 14:41:37 GMT-0600 (CST),
+            duration: 30,
+            now: Mon Feb 26 2018 14:41:52 GMT-0600 (CST)
+            

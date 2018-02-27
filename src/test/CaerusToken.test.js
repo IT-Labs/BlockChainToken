@@ -9,8 +9,7 @@ contract('CaerusToken', accounts => {
   const initialSupply = 73000000e18;
   //How many tokens should be received per wei sent in
   //The math works out to be the same as the previous rate with the new 18 decimal place functionality written into the contract
-  const tokenRate = 416;
-  const tokenRateWei = web3.toWei(tokenRate, 'ether');
+  const tokenRateWei = 400; // use an even number for testing
 
   beforeEach(async function () {
     token = await CaerusToken.new(transferAddress, tokenRateWei, {
@@ -52,8 +51,8 @@ contract('CaerusToken', accounts => {
 
   //buyTokens
   it('buy tokens without discount', async function () {
-    const tokens = 1;
-    const totalPrice = tokenRateWei * tokens;
+    const tokens = 400;
+    const totalPrice = tokens / tokenRateWei;
 
     //Pre state
     const buyerTokens = await token.balanceOf(buyer);
@@ -76,18 +75,19 @@ contract('CaerusToken', accounts => {
 
     assert(buyerTokensPost.eq(buyerTokens + tokens));
     assert(buyerWeiPost <= (buyerWei - totalPrice));
-    assert(ownerTokensPost.eq(ownerTokens - tokens));
+    assert(ownerTokensPost.eq(ownerTokens.sub(tokens)));
 
     const expectedResult = multisigWei - (-1 * totalPrice);
     assert.equal(multisigWeiPost, expectedResult);
   });
 
   it('buy tokens with discount', async function () {
-    const tokens = 10;
+    var tokens = web3.toBigNumber(10e18)
+    tokens = tokens.sub(tokens.modulo(tokenRateWei)); // Get a number divisible by tokenRateWei
     const discountPercent = 60;
-    const totalPrice = tokenRateWei * tokens;
-    const discountRate = tokenRate - (tokenRate * (discountPercent / 100));
-    const expectedTokens = (tokens * tokenRate) / discountRate;
+    const totalPrice = Math.floor(tokens.div(tokenRateWei));
+    const discountRate = 1 + (discountPercent / 100);
+    const expectedTokens = tokens.mul(discountRate);
 
     assert(await token.addDiscount(buyer, tokens, discountPercent, {
       from: owner
@@ -111,10 +111,10 @@ contract('CaerusToken', accounts => {
 
     const ownerTokensPost = await token.balanceOf(owner);
     const multisigWeiPost = web3.eth.getBalance(transferAddress);
-
-    assert(buyerTokensPost.eq(buyerTokens + expectedTokens));
-    assert(buyerWeiPost <= (buyerWei - totalPrice));
-    assert(ownerTokensPost.eq(ownerTokens - expectedTokens));
+    
+    assert(buyerTokensPost.eq(buyerTokens.add(expectedTokens)));
+    assert(buyerWeiPost <= (buyerWei.minus(totalPrice)));
+    assert(ownerTokensPost.eq(ownerTokens.minus(expectedTokens)));
 
     const expectedResult = multisigWei - (-1 * totalPrice);
     assert.equal(multisigWeiPost, expectedResult);
@@ -131,9 +131,9 @@ contract('CaerusToken', accounts => {
     const ownerTokensSecondBuy = await token.balanceOf(owner);
     const multisigWeiSecondBuy = web3.eth.getBalance(transferAddress);
 
-    assert(buyerTokensSecondBuy.eq(buyerTokensPost - (-1 * tokens)));
-    assert(buyerWeiSecondBuy <= (buyerWeiPost - totalPrice));
-    assert(ownerTokensSecondBuy.eq(ownerTokensPost - tokens));
+    assert(buyerTokensSecondBuy.eq(buyerTokensPost.sub((tokens.mul(-1)))));
+    assert(buyerWeiSecondBuy <= (buyerWeiPost.sub(totalPrice)));
+    assert(ownerTokensSecondBuy.eq(ownerTokensPost.sub(tokens)));
 
     const expectedResultSecondBuy = multisigWeiPost - (-1 * totalPrice);
     assert.equal(multisigWeiSecondBuy, expectedResultSecondBuy);
@@ -172,8 +172,8 @@ contract('CaerusToken', accounts => {
   });
 
   it('buy tokens from paused contract, then unpaused and try to buy again', async function () {
-    const tokens = 1;
-    const totalPrice = tokenRateWei * tokens;
+    const tokens = 1e18;
+    const totalPrice = tokens / tokenRateWei;
 
     assert(await token.pause({
       from: owner
@@ -216,7 +216,7 @@ contract('CaerusToken', accounts => {
 
     assert(buyerTokensPost.eq(buyerTokens + tokens));
     assert(buyerWeiPost <= (buyerWei - totalPrice));
-    assert(ownerTokensPost.eq(ownerTokens - tokens));
+    assert(ownerTokensPost.eq(ownerTokens.minus(tokens)));
 
     const expectedResult = multisigWei - (-1 * totalPrice);
     assert.equal(multisigWeiPost, expectedResult);
@@ -263,7 +263,7 @@ contract('CaerusToken', accounts => {
 
   //markTransferTokens
   it('transfer token from owner to specific address', async function () {
-    const tokens = 100;
+    const tokens = 1e18;
 
     //Pre state
     const buyerTokens = await token.balanceOf(buyer);
@@ -277,12 +277,12 @@ contract('CaerusToken', accounts => {
     const buyerTokensPost = await token.balanceOf(buyer);
     const ownerTokensPost = await token.balanceOf(owner);
 
-    assert(buyerTokensPost.eq(buyerTokens + tokens));
-    assert(ownerTokensPost.eq(ownerTokens - tokens));
+    assert(buyerTokensPost.eq(buyerTokens.add(tokens)));
+    assert(ownerTokensPost.eq(ownerTokens.minus(tokens)));
   });
 
   it('transfer token from owner to specific address, not owner', async function () {
-    const tokens = 100;
+    const tokens = 1e18;
 
     return token.markTransferTokens(buyer, tokens, {
         from: buyer
@@ -312,7 +312,7 @@ contract('CaerusToken', accounts => {
   });
 
   it('transfer tokens from owner to invalid address', async function () {
-    const tokens = 100;
+    const tokens = 1e18;
     const invalidAddress = 0x0;
 
     return token.markTransferTokens(invalidAddress, tokens, {
@@ -329,8 +329,8 @@ contract('CaerusToken', accounts => {
 
   //spendToken
   it('spend tokens', async function () {
-    const tokens = 1;
-    const totalPrice = tokenRateWei * tokens;
+    const tokens = 1e18;
+    const totalPrice = tokens /  tokenRateWei;
 
     const buyerTokens = await token.balanceOf(buyer);
     const ownerTokens = await token.balanceOf(owner);
@@ -343,8 +343,8 @@ contract('CaerusToken', accounts => {
     const buyerTokensPostBuying = await token.balanceOf(buyer);
     const ownerTokensPostBuying = await token.balanceOf(owner);
 
-    assert(buyerTokensPostBuying.eq(buyerTokens + tokens));
-    assert(ownerTokensPostBuying.eq(ownerTokens - tokens));
+    assert(buyerTokensPostBuying.eq(buyerTokens.add(tokens)));
+    assert(ownerTokensPostBuying.eq(ownerTokens.minus(tokens)));
 
     assert(await token.spendToken(tokens, {
       from: buyer
@@ -353,8 +353,8 @@ contract('CaerusToken', accounts => {
     const buyerTokensPostSpending = await token.balanceOf(buyer);
     const ownerTokensPostSpending = await token.balanceOf(owner);
 
-    assert(buyerTokensPostSpending.eq(buyerTokensPostBuying - tokens));
-    assert(ownerTokensPostSpending.eq(ownerTokensPostBuying - (-1 * tokens)));
+    assert(buyerTokensPostSpending.eq(buyerTokensPostBuying.minus(tokens)));
+    assert(ownerTokensPostSpending.eq(ownerTokensPostBuying.minus(tokens * -1)));
   });
 
   it('spend tokens, larger amount of tokens', async function () {

@@ -82,20 +82,16 @@ contract RateToken is Ownable {
         require(_buyer != address(0)); // OK
         require(_tokens > 0); // OK
 
-        Discount storage discount = discounts[_buyer]; // OK
-        if (discount.minTokens == 0) { // OK
+        Discount storage discount = discounts[_buyer];
+        require(_tokens >= discount.minTokens); // OK
+        if (discount.minTokens == 0) {
             return _tokens.div(rate); // OK
         }
-        require(_tokens >= discount.minTokens); // OK
 
-        uint256 discountBonus = rate.mul(discount.percent).div(100);
-        uint256 tokensPerWeiWithDiscount = discountBonus + rate;
-        uint256 newTotalWeiNeeded = _tokens.div(tokensPerWeiWithDiscount);
-        return newTotalWeiNeeded;
-
-//        uint256 discountRate = rate.mul(discount.percent).div(100); // OK - discountRate could probably be named better, it makes it sound like a multiple right now.
-//        uint256 newRate = rate.sub(discountRate); // OK
-//        return _tokens.mul(newRate); // OK
+        uint256 normalTokens = _tokens.div(rate);
+        uint256 discountBonus = normalTokens.mul(discount.percent).div(100);
+        uint256 tokens = normalTokens + discountBonus;
+        return tokens.div(rate);
     }
     
     /**

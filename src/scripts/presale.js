@@ -35,10 +35,9 @@ const tgeRetail = [ //TGE & Retail                                   34000000
   ];
 
   const now = +new Date() / 1000
-  const month = 30 * 24 * 3600
   
-  const cliff = now + 6 * month
-  const duration = now + 12 * month
+  const cliff = 6 * 24 * 3600
+  const duration = 12 * 24 * 3600
 
   const formatDate = x => moment(1000 * x).format('MMMM Do YYYY, h:mm:ss a')
 

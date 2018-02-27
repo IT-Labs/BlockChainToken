@@ -5,8 +5,7 @@ contract('RateToken', accounts => {
   const owner = accounts[0];
   const buyer = accounts[1];
   const transferAddress = accounts[9];
-  const tokenRate = 0.0024;
-  const tokenRateWei = web3.toWei(tokenRate, 'ether');
+  const tokenRateWei = 400; // Using an even number for testing (no rounding errors)
   const txPriceWei = 20;
 
   beforeEach(async function () {
@@ -17,8 +16,7 @@ contract('RateToken', accounts => {
   
   //setRate
   it('set new token rate', async function () {
-    const newTokenRate = 0.0012;
-    const newTokenRateWei = web3.toWei(newTokenRate, 'ether');
+    const newTokenRateWei = 800;
 
     assert(await token.setRate(newTokenRateWei, {
       from: owner
@@ -64,21 +62,20 @@ contract('RateToken', accounts => {
 
   //calculateWeiNeeded
   it('calculate wei amount for tokens without discount', async function () {
-    const tokens = 100;
-    const weiExpected = tokenRateWei * tokens;
+    const tokens = 40e18;
+    const weiExpected = tokens / tokenRateWei;
 
     const weiNeeded = await token.calculateWeiNeeded(buyer, tokens, {
       from: buyer
     });
-    assert.equal(weiExpected, weiNeeded);
+    assert.deepEqual(web3.toBigNumber(weiExpected), weiNeeded);
   });
 
   it('calculate wei amount for tokens with discount', async function () {
-    const tokens = 100;
+    const tokens = 4000;
     const discountPercent = 60;
-    const discountRate = tokenRate - (tokenRate * (discountPercent / 100));
-    const discountRateWei = web3.toWei(discountRate, 'ether');
-    const weiExpected = discountRateWei * tokens + txPriceWei;
+    const discountRate = 1 + (discountPercent / 100);
+    const weiExpected =  (tokens / discountRate) / tokenRateWei + txPriceWei;
 
     assert(await token.addDiscount(buyer, tokens, discountPercent, {
       from: owner
@@ -87,8 +84,7 @@ contract('RateToken', accounts => {
     const weiNeeded = await token.calculateWeiNeeded(buyer, tokens, {
       from: buyer
     });
-
-    assert.equal(weiExpected, weiNeeded);
+    assert.equal(+weiExpected, +weiNeeded);
 
     assert(await token.removeDiscount(buyer, {
       from: owner

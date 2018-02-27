@@ -33,11 +33,11 @@ const preSaleSoldTokens = [
   { address: web3.eth.accounts[11], tokens: 3000000e18 }, //8
 ];
 
-const now = +new Date() / 1000
-const month = 30 * 24 * 3600
+const now = Math.floor(+new Date() / 1000);
+// const month = 30 * 24 * 3600
 
-const cliff = now + 6 * month
-const duration = now + 12 * month
+const cliff = 5;
+const duration = 30; // use seconds for purposes of testing
 
 const formatDate = x => moment(1000 * x).format('MMMM Do YYYY, h:mm:ss a')
 
@@ -63,7 +63,7 @@ const vestTokens = (caerusToken, f, callback) => async.eachSeries(f, ({ address,
   console.log(`Assigning founders ${address} ${tokens} CAER. Cliff ${formatDate(cliff)} (${cliff}) Vesting ${formatDate(duration)} (${duration})`);
   return caerusToken
     .createVestedToken(address,
-    now,
+    Math.floor(+new Date() / 1000),
     cliff,
     duration,
     tokens, { gas: 3000000, from: ownerAddress })
@@ -74,8 +74,6 @@ const vestTokens = (caerusToken, f, callback) => async.eachSeries(f, ({ address,
 module.exports = async function (callback) {
 
   const caerusToken = await CaerusToken.deployed();
-  console.log(`Assigning founders vested tokens`);
-  await vestTokens(caerusToken, founders, callback);
   console.log(`Assigning tgeRetail`);
   await assignTokens(caerusToken, tgeRetail, callback);
   console.log(`Assigning launchPartners`);
@@ -86,4 +84,7 @@ module.exports = async function (callback) {
   await assignTokens(caerusToken, foundation, callback);
   console.log(`Assigning preSaleSoldTokens`);
   await markTransferTokens(caerusToken, preSaleSoldTokens, callback);
+
+  console.log(`Assigning founders vested tokens`);
+  await vestTokens(caerusToken, founders, callback); // vest tokens last because seconds count
 }
