@@ -8,37 +8,37 @@ import '../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol';
   * @dev Rate Token Contract implementation 
 */
 contract RateToken is Ownable {
-    using SafeMath for uint256; // OK
+    using SafeMath for uint256;
     //struct that holds values for specific discount
-    struct Discount { // OK
+    struct Discount {
         //min number of tokens expected to be bought
-        uint256 minTokens; // OK
+        uint256 minTokens;
         //discount percentage
-        uint256 percent; // OK
+        uint256 percent;
     }
     //Discount per address
-    mapping(address => Discount) private discounts; // OK
+    mapping(address => Discount) private discounts;
     //Token conversion rate
-    uint256 public rate; // OK
+    uint256 public rate;
 
    /**
     * @dev Event which is fired when Rate is set
     */
-    event RateSet(uint256 rate); // OK
+    event RateSet(uint256 rate);
 
    
-    function RateToken(uint256 _initialRate) public { // OK
-        setRate(_initialRate); // OK
+    function RateToken(uint256 _initialRate) public {
+        setRate(_initialRate);
     }
 
    /**
    * @dev Function that sets the conversion rate
    * @param _rateInWei The amount of rate to be set
     */
-    function setRate(uint _rateInWei) onlyOwner public { // OK
-        require(_rateInWei > 0); // OK
-        rate = _rateInWei; // OK
-        RateSet(rate); // OK
+    function setRate(uint _rateInWei) onlyOwner public {
+        require(_rateInWei > 0);
+        rate = _rateInWei;
+        RateSet(rate);
     }
 
    /**
@@ -49,17 +49,17 @@ contract RateToken is Ownable {
    * @return A boolean that indicates if the operation was successful.
     */
     
-    // PERCENTAGE COULD BE UINT8 (0 - 255)
+    // NOTE FROM BLOCKERA - PERCENTAGE COULD BE UINT8 (0 - 255)
     function addDiscount(address _buyer, uint256 _minTokens, uint256 _percent) public onlyOwner returns (bool) { 
-        require(_buyer != address(0)); // OK
-        require(_minTokens > 0); // OK
-        require(_percent > 0); // OK
-        require(_percent < 100); // OK
-        Discount memory discount; // OK
-        discount.minTokens = _minTokens; // OK
-        discount.percent = _percent; // OK
-        discounts[_buyer] = discount; // OK
-        return true; // OK
+        require(_buyer != address(0));
+        require(_minTokens > 0);
+        require(_percent > 0);
+        require(_percent < 100);
+        Discount memory discount;
+        discount.minTokens = _minTokens;
+        discount.percent = _percent;
+        discounts[_buyer] = discount;
+        return true;
     }
 
    /**
@@ -67,9 +67,9 @@ contract RateToken is Ownable {
    * @param _buyer The address to remove the discount from.
    * @return A boolean that indicates if the operation was successful.
    */
-    function removeDiscount(address _buyer) public onlyOwner { // OK
-        require(_buyer != address(0)); // OK
-        removeExistingDiscount(_buyer); // OK
+    function removeDiscount(address _buyer) public onlyOwner {
+        require(_buyer != address(0));
+        removeExistingDiscount(_buyer);
     }
 
     /**
@@ -79,13 +79,13 @@ contract RateToken is Ownable {
     * @return uint256 the price for tokens in wei.
     */
     function calculateWeiNeeded(address _buyer, uint _tokens) public view returns (uint256) {
-        require(_buyer != address(0)); // OK
-        require(_tokens > 0); // OK
+        require(_buyer != address(0));
+        require(_tokens > 0);
 
-        Discount storage discount = discounts[_buyer];
-        require(_tokens >= discount.minTokens); // OK
+        Discount memory discount = discounts[_buyer];
+        require(_tokens >= discount.minTokens);
         if (discount.minTokens == 0) {
-            return _tokens.div(rate); // OK
+            return _tokens.div(rate);
         }
 
         uint256 costOfTokensNormally = _tokens.div(rate);
@@ -97,8 +97,8 @@ contract RateToken is Ownable {
      * @dev Removes discount for concrete buyer.
      * @param _buyer the address for which the discount will be removed.
      */
-    function removeExistingDiscount(address _buyer) internal { // OK
-        delete(discounts[_buyer]); // OK
+    function removeExistingDiscount(address _buyer) internal {
+        delete(discounts[_buyer]);
     }
 
     /**
@@ -108,7 +108,7 @@ contract RateToken is Ownable {
     * @return uint256 value of the calculated tokens.
     */
     function calculateTokens(address _buyer, uint256 _buyerAmountInWei) internal view returns (uint256) {
-        Discount storage discount = discounts[_buyer];
+        Discount memory discount = discounts[_buyer];
         if (discount.minTokens == 0) {
             return _buyerAmountInWei.mul(rate);
         }
