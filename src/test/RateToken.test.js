@@ -72,19 +72,20 @@ contract('RateToken', accounts => {
   });
 
   it('calculate wei amount for tokens with discount', async function () {
-    const tokens = 4000;
-    const discountPercent = 60;
-    const discountRate = 1 + (discountPercent / 100);
-    const weiExpected =  (tokens / discountRate) / tokenRateWei + txPriceWei;
+    //crazy numbers and percents to test with
+    const tokens = 217e18;
+    const discountPercent = 36;
+      const discountRate = 1 - (discountPercent / 100);
+      const weiExpected = (tokens / tokenRateWei) * discountRate;
 
-    assert(await token.addDiscount(buyer, tokens, discountPercent, {
+      assert(await token.addDiscount(buyer, tokens, discountPercent, {
       from: owner
     }));
 
     const weiNeeded = await token.calculateWeiNeeded(buyer, tokens, {
       from: buyer
     });
-    assert.equal(+weiExpected, +weiNeeded);
+      assert.equal(+weiExpected, +weiNeeded);
 
     assert(await token.removeDiscount(buyer, {
       from: owner

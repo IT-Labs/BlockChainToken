@@ -88,9 +88,9 @@ contract RateToken is Ownable {
             return _tokens.div(rate); // OK
         }
 
-        uint256 discountBonus = _tokens.mul(100).div(100 + discount.percent);
-        uint256 tokens = _tokens.div(rate);
-        return tokens;
+        uint256 costOfTokensNormally = _tokens.div(rate);
+        return costOfTokensNormally.mul(100 - discount.percent).div(100);
+
     }
     
     /**
