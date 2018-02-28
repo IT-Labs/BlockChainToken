@@ -480,8 +480,8 @@ contract('CaerusToken', accounts => {
     const buyerTokensPost = await token.balanceOf(buyer);
     const ownerTokensPost = await token.balanceOf(owner);
 
-    assert(buyerTokensPost.eq(buyerTokens + tokens));
-    assert(ownerTokensPost.eq(ownerTokens - tokens));
+    assert(buyerTokensPost.eq(buyerTokens.plus(tokens)));
+    assert(ownerTokensPost.eq(ownerTokens.minus(tokens)));
 
     assert(await token.transferAnyCaerusToken(buyer, tokens, {
         from: owner
