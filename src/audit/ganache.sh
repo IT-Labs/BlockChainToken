@@ -13,6 +13,8 @@ truffle migrate --reset > /dev/null
 echo "__________________________Initial State__________________________" > output.txt
 truffle exec ./balance.js >> output.txt
 
+# Empty multisig wallet that will be receiving ether
+# truffle exec ./emptywallet.js
 
 echo "executing presale methods..."
 echo "__________________________Presale__________________________" >> output.txt

@@ -6,7 +6,7 @@ var async = require('async');
 
 module.exports = async function (callback) {
   const investorAddresses = web3.eth.accounts.splice(0, 75);
-  const transferAddress = "0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7";
+  const transferAddress = web3.eth.accounts[9];
   //How many tokens should be received per wei sent in
   //The math works out to be the same as the previous rate with the new 18 decimal place functionality written into the contract
   const initialRate = 416;

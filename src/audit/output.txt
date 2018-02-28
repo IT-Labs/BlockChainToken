@@ -2,7 +2,7 @@ __________________________Initial State__________________________
 Using network 'development'.
 
 Total Supply: 73000000
-MultiSig Balance: 0 Ether
+MultiSig Balance: 100 Ether
 
 0x44399e92107464187c61b3708413196a76fce74e  balance: 73000000.000000000000000000
 0x0c39284e070427750afc519b9e0fbbd5f5a3b862  balance: 0.000000000000000000
@@ -91,7 +91,7 @@ Assigning 0x8f368e707e39f898e052ea09699356ae34ca3a95 1.485e+24 tokens.
 Assigning foundation
 Assigning 0x72067be19865d15a48227e0fdae7cfdc818c67ff 3e+23 tokens.
 Assigning preSaleSoldTokens
-Assigning 0x6f3b751453fa616fe9dfd93919ef187232dc22a7 1e+24 tokens.
+Assigning 0x66e187e7d31d77031ca9eb11694983aea89466f1 1e+24 tokens.
 Assigning founders vested tokens
 Assigning founders 0x0c39284e070427750afc519b9e0fbbd5f5a3b862 1e+25 CAER. Cliff December 31st 1969, 6:00:05 pm (5) Vesting December 31st 1969, 6:00:30 pm (30)
 tx submitted
@@ -113,7 +113,7 @@ tx submitted
 Using network 'development'.
 
 Total Supply: 73000000
-MultiSig Balance: 0 Ether
+MultiSig Balance: 100 Ether
 
 0x44399e92107464187c61b3708413196a76fce74e  balance: 7000000.000000000000000000
 0x0c39284e070427750afc519b9e0fbbd5f5a3b862  balance: 0.000000000000000000
@@ -124,7 +124,7 @@ MultiSig Balance: 0 Ether
 0x6cdedc08d8fa67d43dfff2632827f029790bcf0d  balance: 4245000.000000000000000000
 0x8f368e707e39f898e052ea09699356ae34ca3a95  balance: 1485000.000000000000000000
 0x72067be19865d15a48227e0fdae7cfdc818c67ff  balance: 300000.000000000000000000
-0x6f3b751453fa616fe9dfd93919ef187232dc22a7  balance: 1000000.000000000000000000
+0x6f3b751453fa616fe9dfd93919ef187232dc22a7  balance: 0.000000000000000000
 0x00950a2fe373a16db70937cb7e05322a2dfae23a  balance: 2000000.000000000000000000
 0x85dfd32ec0de31f85b18eece4c9b13e2cd200758  balance: 3000000.000000000000000000
 0x3d2ababf072801bdc1182e37dc268dfe19d0015b  balance: 0.000000000000000000
@@ -219,7 +219,7 @@ Using network 'development'.
 Using network 'development'.
 
 Total Supply: 73000000
-MultiSig Balance: 750 Ether
+MultiSig Balance: 850 Ether
 
 0x44399e92107464187c61b3708413196a76fce74e  balance: 6648272.000000000000000000
 0x0c39284e070427750afc519b9e0fbbd5f5a3b862  balance: 0.000000000000000000
@@ -230,7 +230,7 @@ MultiSig Balance: 750 Ether
 0x6cdedc08d8fa67d43dfff2632827f029790bcf0d  balance: 4245000.000000000000000000
 0x8f368e707e39f898e052ea09699356ae34ca3a95  balance: 1485000.000000000000000000
 0x72067be19865d15a48227e0fdae7cfdc818c67ff  balance: 300000.000000000000000000
-0x6f3b751453fa616fe9dfd93919ef187232dc22a7  balance: 1000000.000000000000000000
+0x6f3b751453fa616fe9dfd93919ef187232dc22a7  balance: 0.000000000000000000
 0x00950a2fe373a16db70937cb7e05322a2dfae23a  balance: 2000000.000000000000000000
 0x85dfd32ec0de31f85b18eece4c9b13e2cd200758  balance: 3000000.000000000000000000
 0x3d2ababf072801bdc1182e37dc268dfe19d0015b  balance: 4201.600000000000000000
@@ -301,25 +301,25 @@ Using network 'development'.
 
 beneficiary: 0x0c39284e070427750afc519b9e0fbbd5f5a3b862, 
             balance: 10000000, 
-            vested tokens: 4000000,
-            cliff: Mon Feb 26 2018 14:41:41 GMT-0600 (CST),
-            start: Mon Feb 26 2018 14:41:36 GMT-0600 (CST),
+            vested tokens: 3333333.333333333333333333,
+            cliff: Wed Feb 28 2018 09:34:33 GMT-0600 (CST),
+            start: Wed Feb 28 2018 09:34:28 GMT-0600 (CST),
             duration: 30,
-            now: Mon Feb 26 2018 14:41:52 GMT-0600 (CST)
+            now: Wed Feb 28 2018 09:34:41 GMT-0600 (CST)
             
 beneficiary: 0x3f96030c0422314ad3ca8760c6065e6e087953d4, 
             balance: 8000000, 
-            vested tokens: 2933333.333333333333333333,
-            cliff: Mon Feb 26 2018 14:41:42 GMT-0600 (CST),
-            start: Mon Feb 26 2018 14:41:37 GMT-0600 (CST),
+            vested tokens: 2666666.666666666666666666,
+            cliff: Wed Feb 28 2018 09:34:33 GMT-0600 (CST),
+            start: Wed Feb 28 2018 09:34:28 GMT-0600 (CST),
             duration: 30,
-            now: Mon Feb 26 2018 14:41:52 GMT-0600 (CST)
+            now: Wed Feb 28 2018 09:34:41 GMT-0600 (CST)
             
 beneficiary: 0xaa507884adffb8dfa47588090ce167f12e7e1651, 
             balance: 1970000, 
-            vested tokens: 722333.333333333333333333,
-            cliff: Mon Feb 26 2018 14:41:42 GMT-0600 (CST),
-            start: Mon Feb 26 2018 14:41:37 GMT-0600 (CST),
+            vested tokens: 656666.666666666666666666,
+            cliff: Wed Feb 28 2018 09:34:33 GMT-0600 (CST),
+            start: Wed Feb 28 2018 09:34:28 GMT-0600 (CST),
             duration: 30,
-            now: Mon Feb 26 2018 14:41:52 GMT-0600 (CST)
+            now: Wed Feb 28 2018 09:34:41 GMT-0600 (CST)
             

@@ -28,7 +28,7 @@ const foundation = [ // Foundation                                  300000
 ];
 
 const preSaleSoldTokens = [
-  { address: web3.eth.accounts[9], tokens: 1000000e18 }, //2
+  { address: web3.eth.accounts[99], tokens: 1000000e18 }, //2
   { address: web3.eth.accounts[10], tokens: 2000000e18 },
   { address: web3.eth.accounts[11], tokens: 3000000e18 }, //8
 ];
