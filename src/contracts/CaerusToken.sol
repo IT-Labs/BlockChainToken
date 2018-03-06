@@ -27,7 +27,13 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
         transferAddress = _transferAddress;
         balances[owner] = totalSupply_;
   	}
-
+    /**
+    * @dev Sets the address to transfer funds.
+    * @param _transferAddress An address to transfer funds.
+    */
+    function setTransferAddress(address _transferAddress) onlyOwner public {
+        transferAddress = _transferAddress;
+    }
     /**
     * @dev Fallback function when receiving Ether.
     */
@@ -78,7 +84,7 @@ contract CaerusToken is RateToken, PausableToken, DetailedERC20 {
    * @return Boolean representing the successful execution of the function.
    */
     function createVestedToken(address _beneficiary, uint256 _start, uint256 _cliff, uint256 _duration, uint256 _tokens) onlyOwner public returns (bool) {
-        var vestedToken = new TokenVesting(_beneficiary, _start, _cliff, _duration, false);
+        TokenVesting vestedToken = new TokenVesting(_beneficiary, _start, _cliff, _duration, false);
         vestedTokens[_beneficiary] = vestedToken;
         address vestedAddress = address(vestedToken);
         transferTokens(owner, vestedAddress, _tokens);
