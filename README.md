@@ -18,4 +18,4 @@ Token:
 Code for the Caerus token and the sale has been reviewed by:
 BlockEra LLC February 2018.
 
-A bug bounty for the CAER token and sale started on [pending date]. More details.
+A bug bounty for the CAER token and sale started on [pending date]. [More details](https://www.caerusconnections.io/).
